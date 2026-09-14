@@ -322,12 +322,19 @@
             pressAnyKey: "Нажмите любую клавишу перемещения", pressEsc: "Нажмите [ESC] чтобы прервать сессию",
             timeOut: "ВРЕМЯ ИСТЕКАЕТ!", traitor: "ОБНАРУЖЕН ПРЕДАТЕЛЬ !", gameOver: "ИГРА ОКОНЧЕНА",
             restart: "Счет: {s}. Нажмите для рестарта.", practiceActive: "РЕЖИМ ТРЕНИРОВКИ",
-            alertSelect: "Выберите стратагемы слева!", settingsTitle: "НАСТРОЙКИ", langLabel: "ЯЗЫК:",
-            inputLabel: "УПРАВЛЕНИЕ:", close: "ЗАКРЫТЬ", timerSpeed: "СКОРОСТЬ ТАЙМЕРА (СЕК):",
+            alertSelect: "Выберите стратагемы слева!", settingsTitle: "НАСТРОЙКИ", langLabel: "ЯЗЫК / LANGUAGE:",
+            inputLabel: "УПРАВЛЕНИЕ / INPUT:", close: "ЗАКРЫТЬ", timerSpeed: "СКОРОСТЬ ТАЙМЕРА (СЕК):",
             inputBoth: "WASD + Стрелки", inputWasd: "Только WASD", inputArrows: "Только Стрелки", inputCustom: "Свои кнопки",
             customHint: "Кликните на кнопку, чтобы назначить. Нажмите ESC для отмены.",
             cat1: "ПАТРИОТИЧЕСКИЙ ЦЕНТР АДМИНИСТРИРОВАНИЯ", cat2: "ОРБИТАЛЬНЫЕ ПУШКИ", cat3: "АНГАР", cat4: "МОСТИК",
-            cat5: "ИНЖЕНЕРНЫЙ ОТСЕК", cat6: "РОБОТОТЕХНИЧЕСКИЙ ЦЕХ", cat7: "ЗАДАНИЯ / ОБЩИЕ"
+            cat5: "ИНЖЕНЕРНЫЙ ОТСЕК", cat6: "РОБОТОТЕХНИЧЕСКИЙ ЦЕХ", cat7: "ЗАДАНИЯ / ОБЩИЕ",
+            
+            // Новые категории из скриншотов
+            cat_chem: "ХИМЗАЩИТА", cat_urban: "ГОРОДСКИЕ ЛЕГЕНДЫ", cat_servants: "СЛУГИ СВОБОДЫ",
+            cat_frontier: "ПОГРАНИЧНОЕ ПРАВОСУДИЕ", cat_ceremony: "ЦЕРЕМОНИЙМЕЙСТЕР", cat_law: "СИЛА ЗАКОНА",
+            cat_control: "КОНТРОЛЬНАЯ ГРУППА", cat_dust: "ПЫЛЕВЫЕ ВИХРИ", cat_pythons: "КОММАНДОС «ПИТОНЫ»",
+            cat_redacted: "ПОЛК [ВЫРЕЗАНО]", cat_blockade: "РАЗРЫВАЮЩИЕ БЛОКАДУ", cat_trench: "ТРАНШЕЙНАЯ ДИВИЗИЯ",
+            cat_exo: "ЭКЗОЭКСПЕРТЫ", cat_castellan: "ИДЕАЛЫ КАСТЕЛЯНА"
         },
         en: {
             pageTitle: "Stratagem Trainer Helldivers 2",
@@ -344,7 +351,14 @@
             inputBoth: "WASD + Arrows", inputWasd: "WASD Only", inputArrows: "Arrows Only", inputCustom: "Custom Keys",
             customHint: "Click a button to rebind. Press ESC to cancel.",
             cat1: "PATRIOTIC ADMINISTRATION CENTER", cat2: "ORBITAL CANNONS", cat3: "HANGAR", cat4: "BRIDGE",
-            cat5: "ENGINEERING BAY", cat6: "ROBOTICS WORKSHOP", cat7: "MISSIONS / GENERAL"
+            cat5: "ENGINEERING BAY", cat6: "ROBOTICS WORKSHOP", cat7: "MISSIONS / GENERAL",
+            
+            // Новые категории из скриншотов
+            cat_chem: "CHEMICAL AGENTS", cat_urban: "URBAN LEGENDS", cat_servants: "SERVANTS OF FREEDOM",
+            cat_frontier: "FRONTIER JUSTICE", cat_ceremony: "MASTER OF CEREMONIES", cat_law: "FORCE OF LAW",
+            cat_control: "CONTROL GROUP", cat_dust: "DUST DEVILS", cat_pythons: "PYTHON COMMANDOS",
+            cat_redacted: "[REDACTED] REGIMENT", cat_blockade: "BLOCKADE BREAKERS", cat_trench: "TRENCH DIVISION",
+            cat_exo: "EXO-EXPERTS", cat_castellan: "CASTELLAN'S IDEALS"
         }
     };
 
@@ -359,8 +373,7 @@
         { id: 'mg_206_heavy_machine_gun', name_ru: 'Тяжелый пулемет MG-206', name_en: 'MG-206 Heavy Machine Gun', cat: 'cat1', seq: ['down', 'left', 'up', 'down', 'down'], img: 'img/mg_206_heavy_machine_gun.svg' },
         { id: 'rl_77_airburst_rocket_launcher', name_ru: 'Ракетница RL-77', name_en: 'RL-77 Airburst Rocket Launcher', cat: 'cat1', seq: ['down', 'up', 'up', 'left', 'right'], img: 'img/rl_77_airburst_rocket_launcher.svg' },
         { id: 'mls_4x_commando', name_ru: 'Ракетница Коммандо MLS-4X', name_en: 'MLS-4X Commando', cat: 'cat1', seq: ['down', 'left', 'up', 'down', 'right'], img: 'img/mls_4x_commando.svg' },
-        { id: 'tx_41_sterilizer', name_ru: 'Стерилизатор TX-41', name_en: 'TX-41 Sterilizer', cat: 'cat1', seq: ['down', 'left', 'up', 'down', 'left'], img: 'img/tx_41_sterilizer.svg' },
-
+        
         { id: 'orbital_gatling_barrage', name_ru: 'Орбитальный залп из гатлинга', name_en: 'Orbital Gatling Barrage', cat: 'cat2', seq: ['right', 'down', 'left', 'up', 'up'], img: 'img/orbital_gatling_barrage.svg' },
         { id: 'orbital_airburst_strike', name_ru: 'Орбитальный воздушный разрыв', name_en: 'Orbital Airburst Strike', cat: 'cat2', seq: ['right', 'right', 'right'], img: 'img/orbital_airburst_strike.svg' },
         { id: 'orbital_120mm_he_barrage', name_ru: 'Орбитальный 120-мм залп', name_en: 'Orbital 120mm HE Barrage', cat: 'cat2', seq: ['right', 'right', 'down', 'left', 'right', 'down'], img: 'img/orbital_120mm_he_barrage.svg' },
@@ -399,8 +412,6 @@
         { id: 'sh_32_shield_generator_pack', name_ru: 'Генератор щита SH-32', name_en: 'SH-32 Shield Generator Pack', cat: 'cat5', seq: ['down', 'up', 'left', 'right', 'left', 'right'], img: 'img/sh_32_shield_generator_pack.svg' },
         { id: 'md_17_anti_tank_mines', name_ru: 'Противотанковые мины MD-17', name_en: 'MD-17 Anti-Tank Mines', cat: 'cat5', seq: ['down', 'left', 'up', 'up'], img: 'img/md_17_anti_tank_mines.svg' },
         { id: 'ax_ar_23_guard_dog', name_ru: 'Дрон «Гвардеец» (Винтовка)', name_en: 'AX/AR-23 "Guard Dog"', cat: 'cat5', seq: ['down', 'up', 'left', 'up', 'right', 'down'], img: 'img/ax_ar_23_guard_dog.svg' },
-        { id: 'ax_tx_13_dog_breath', name_ru: 'Дрон «Гвардеец» (Газ)', name_en: 'AX/TX-13 "Guard Dog" Dog Breath', cat: 'cat5', seq: ['down', 'up', 'left', 'up', 'right', 'up'], img: 'img/ax_tx_13_dog_breath.svg' },
-        { id: 'sh_51_directional_shield', name_ru: 'Направленный щит SH-51', name_en: 'SH-51 Directional Shield', cat: 'cat5', seq: ['down', 'up', 'left', 'right', 'up', 'up'], img: 'img/sh_51_directional_shield.svg' },
 
         { id: 'a_mg_43_machine_gun_sentry', name_ru: 'Пулеметная турель', name_en: 'Machine Gun Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'right', 'up'], img: 'img/a_mg_43_machine_gun_sentry.svg' },
         { id: 'a_g_16_gatling_sentry', name_ru: 'Турель «Гатлинг»', name_en: 'Gatling Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'left'], img: 'img/a_g_16_gatling_sentry.svg' },
@@ -415,7 +426,66 @@
         { id: 'resupply', name_ru: 'Припасы', name_en: 'Resupply', cat: 'cat7', seq: ['down', 'down', 'up', 'right'], img: 'img/resupply.svg' },
         { id: 'sos_beacon', name_ru: 'Маяк SOS', name_en: 'SOS Beacon', cat: 'cat7', seq: ['up', 'down', 'right', 'up'], img: 'img/sos_beacon.svg' },
         { id: 'nux_223_hellbomb', name_ru: 'Адская бомба', name_en: 'Hellbomb', cat: 'cat7', seq: ['down', 'up', 'left', 'down', 'up', 'right', 'down', 'up'], img: 'img/nux_223_hellbomb.svg' },
-        { id: 'seaf_artillery', name_ru: 'Артиллерия SEAF', name_en: 'SEAF Artillery', cat: 'cat7', seq: ['right', 'up', 'up', 'down'], img: 'img/seaf_artillery.svg' }
+        { id: 'seaf_artillery', name_ru: 'Артиллерия SEAF', name_en: 'SEAF Artillery', cat: 'cat7', seq: ['right', 'up', 'up', 'down'], img: 'img/seaf_artillery.svg' },
+
+        // --- НОВЫЕ КАТЕГОРИИ (ЗАСЛУГИ / УТЕЧКИ ИЗ СКРИНШОТОВ) ---
+
+        // ХИМЗАЩИТА
+        { id: 'tx_41_sterilizer', name_ru: 'Стерилизатор', name_en: 'Sterilizer', cat: 'cat_chem', seq: ['down', 'left', 'up', 'down', 'left'], img: 'img/tx_41_sterilizer.svg' },
+        { id: 'ax_tx_13_dog_breath', name_ru: 'Вонючка', name_en: '"Dog Breath" Rover', cat: 'cat_chem', seq: ['down', 'up', 'left', 'up', 'right', 'up'], img: 'img/ax_tx_13_dog_breath.svg' },
+
+        // ГОРОДСКИЕ ЛЕГЕНДЫ
+        { id: 'sh_51_directional_shield', name_ru: 'Щит направленного действия', name_en: 'Directional Shield', cat: 'cat_urban', seq: ['down', 'up', 'left', 'right', 'up', 'up'], img: 'img/sh_51_directional_shield.svg' },
+        { id: 'e_flam_40_flame_sentry', name_ru: 'Турель-огнемет', name_en: 'Flame Sentry', cat: 'cat_urban', seq: ['down', 'up', 'right', 'down', 'up', 'up'], img: 'img/a_flam_40_flame_sentry.svg' },
+        { id: 'e_at_12_anti_tank_emplacement', name_ru: 'Противотанковое орудие', name_en: 'Anti-Tank Emplacement', cat: 'cat_urban', seq: ['down', 'up', 'left', 'right', 'right', 'right'], img: 'img/e_at_12_anti_tank_emplacement.svg' },
+
+        // СЛУГИ СВОБОДЫ
+        { id: 'b_100_portable_hellbomb', name_ru: 'Переносная адская бомба', name_en: 'Portable Hellbomb', cat: 'cat_servants', seq: ['down', 'right', 'up', 'up', 'up'], img: 'img/b_100_portable_hellbomb.svg' },
+
+        // ПОГРАНИЧНОЕ ПРАВОСУДИЕ
+        { id: 'hover_pack', name_ru: 'Ранец для парения', name_en: 'Hover Pack', cat: 'cat_frontier', seq: ['down', 'up', 'up', 'down', 'left'], img: 'img/lift_860_hover_pack.svg' },
+
+        // ЦЕРЕМОНИЙМЕЙСТЕР
+        { id: 'cqc_1_one_true_flag', name_ru: 'Один истинный флаг', name_en: 'One True Flag', cat: 'cat_ceremony', seq: ['down', 'left', 'right', 'right', 'up'], img: 'img/cqc_1_one_true_flag.svg' },
+
+        // СИЛА ЗАКОНА
+        { id: 'ax_arc_3_k_9', name_ru: 'К-9', name_en: 'K-9 Guard Dog', cat: 'cat_law', seq: ['down', 'up', 'left', 'up', 'right', 'left'], img: 'img/ax_arc_3_k_9.svg' },
+        { id: 'gl_52_de_escalator', name_ru: 'Деэскалатор', name_en: 'De-Escalator', cat: 'cat_law', seq: ['down', 'right', 'up', 'left', 'right'], img: 'img/gl_52_de_escalator.svg' },
+
+        // КОНТРОЛЬНАЯ ГРУППА
+        { id: 'laser_sentry', name_ru: 'Лазерная турель', name_en: 'Laser Sentry', cat: 'cat_control', seq: ['down', 'up', 'right', 'left', 'up'], img: 'img/a_las_98_laser_sentry.svg' },
+        { id: 'warp_pack', name_ru: 'Варп-ранец', name_en: 'Warp Pack', cat: 'cat_control', seq: ['down', 'up', 'left', 'down', 'right'], img: 'img/lift_182_warp_pack.svg' },
+        { id: 'epoch', name_ru: 'Эпоха', name_en: 'Epoch', cat: 'cat_control', seq: ['down', 'left', 'up', 'right', 'down'], img: 'img/plas_45_epoch.svg' },
+
+        // ПЫЛЕВЫЕ ВИХРИ
+        { id: 'ms_11_solo_silo', name_ru: 'Одиночная пусковая шахта', name_en: 'Solo Silo', cat: 'cat_dust', seq: ['down', 'up', 'right', 'down', 'down'], img: 'img/ms_11_solo_silo.svg' },
+        { id: 'disposable_napalm', name_ru: 'Одноразовый напалм', name_en: 'EAT-700 Expendable Napalm', cat: 'cat_dust', seq: ['down', 'left', 'up', 'down', 'right'], img: 'img/eat_700_expendable_napalm.svg' },
+        { id: 'harpoon', name_ru: 'Гарпун', name_en: 'S-11 Speargun', cat: 'cat_dust', seq: ['down', 'left', 'down', 'up', 'right'], img: 'img/s_11_speargun.svg' },
+
+        // КОММАНДОС «ПИТОНЫ»
+        { id: 'maxigun', name_ru: 'Максиган', name_en: 'M-1000 Maxigun', cat: 'cat_pythons', seq: ['down', 'left', 'down', 'right', 'up'], img: 'img/m_1000_maxigun.svg' },
+        { id: 'cqc_9_defoliation_tool', name_ru: 'Дефолиатор', name_en: 'Defoliator', cat: 'cat_pythons', seq: ['down', 'left', 'right', 'right', 'down'], img: 'img/cqc_9_defoliation_tool.svg' },
+        { id: 'ax_flam_75_hot_dog', name_ru: 'Хот-дог', name_en: 'Hot Dog', cat: 'cat_pythons', seq: ['down', 'up', 'left', 'up', 'left', 'left'], img: 'img/ax_flam_75_hot_dog.svg' },
+
+        // ПОЛК [ВЫРЕЗАНО]
+        { id: 'c4_kit', name_ru: 'Комплект C4', name_en: 'B/MD C4 Pack', cat: 'cat_redacted', seq: ['down', 'left', 'down', 'up', 'up'], img: 'img/b_md_c4_pack.svg' },
+
+        // РАЗРЫВАЮЩИЕ БЛОКАДУ
+        { id: 'cqc_20_breaching_hammer', name_ru: 'Штурмовой молот', name_en: 'Breaching Hammer', cat: 'cat_blockade', seq: ['down', 'left', 'right', 'left', 'up'], img: 'img/cqc_20_breaching_hammer.svg' },
+        { id: 'equalizer', name_ru: 'Уравнитель', name_en: 'EAT-411 Leveller', cat: 'cat_blockade', seq: ['down', 'left', 'right', 'down', 'up'], img: 'img/eat_411_leveller.svg' },
+        { id: 'belt_grenade_launcher', name_ru: 'Ленточный гранатомет', name_en: 'GL-28 Belt-Fed Grenade Launcher', cat: 'cat_blockade', seq: ['down', 'left', 'down', 'up', 'down'], img: 'img/gl_28_belt_fed_grenade_launcher.svg' },
+
+        // ТРАНШЕЙНАЯ ДИВИЗИЯ
+        { id: 'b_flam_80_cremator', name_ru: 'Крематорий', name_en: 'B/FLAM-80 Cremator', cat: 'cat_trench', seq: ['down', 'down', 'right', 'down', 'up', 'up'], img: 'img/b_flam_80_cremator.svg' },
+        { id: 'gas_mortar_sentry', name_ru: 'Турель с газовым минометом', name_en: 'A/GM-17 Gas Mortar Sentry', cat: 'cat_trench', seq: ['down', 'up', 'right', 'right', 'left'], img: 'img/a_gm_17_gas_mortar_sentry.svg' },
+
+        // ЭКЗОЭКСПЕРТЫ
+        { id: 'exo_breach', name_ru: 'Экзокостюм «Прорыв»', name_en: 'EXO-55 Breakthrough', cat: 'cat_exo', seq: ['left', 'down', 'right', 'up', 'left', 'up', 'up'], img: 'img/exo_55_breakthrough_exosuit.svg' },
+        { id: 'exo_lumberjack', name_ru: 'Экзокостюм «Лесоруб»', name_en: 'EXO-51 Lumberer Exosuit', cat: 'cat_exo', seq: ['left', 'down', 'right', 'up', 'left', 'down', 'left'], img: 'img/exo_51_lumberer_exosuit.svg' },
+        { id: 'bullet_storm', name_ru: '«Шквал пуль»', name_en: 'MGX-42 Bullet Storm', cat: 'cat_exo', seq: ['down', 'left', 'right', 'up', 'down'], img: 'img/mgx_42_bullet_storm.svg' },
+
+        // ИДЕАЛЫ КАСТЕЛЯНА
+        { id: 'melta_gun', name_ru: 'Плавкопушка', name_en: '40-K Meltagun', cat: 'cat_castellan', seq: ['down', 'left', 'down', 'right', 'left'], img: 'img/40_k_meltagun.svg' }
     ];
 
     const arrowSymbols = { 'up': '🡅', 'down': '🡇', 'left': '🡄', 'right': '🡆' };
