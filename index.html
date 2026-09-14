@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Trainer Helldivers 2</title>
+    <link rel="icon" href="img/icon">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, input, select, button { font-family: 'Rajdhani', sans-serif; font-weight: 600; }
+
+        body {
+            background-color: #0f1115;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .mode-btn, .settings-btn, .key-btn, label, .arrow, .checkbox-container, .stat-label {
+            user-select: none;
+        }
+
+        .crt-text {
+            text-shadow: -1px 0 0 rgba(255,0,0,0.8), 1px 0 0 rgba(0,180,255,0.8);
+            letter-spacing: 0.5px;
+        }
+
+        /* --- ЛЕВАЯ ПАНЕЛЬ --- */
+        #sidebar {
+            width: 380px;
+            background-color: #1a1c20;
+            border-right: 4px solid #ffe800;
+            display: flex;
+            flex-direction: column;
+            border-left: 10px solid #2a2c31; 
+            border-image: repeating-linear-gradient(45deg, #2a2c31, #2a2c31 10px, #1a1c20 10px, #1a1c20 20px) 1;
+            position: relative;
+            z-index: 30; 
+        }
+
+        .sidebar-header {
+            display: flex; justify-content: flex-end; align-items: center;
+            padding: 15px 20px; font-size: 16px; font-weight: 700;
+        }
+
+        .checkbox-container { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        input[type="checkbox"] { width: 18px; height: 18px; accent-color: #ffe800; cursor: pointer; }
+
+        #search-container { padding: 0 20px 15px 20px; border-bottom: 2px solid #333; }
+        #search-input {
+            width: 100%; padding: 8px 12px; background-color: #2a2c31;
+            border: 1px solid #444; color: white; font-size: 16px; outline: none;
+        }
+        #search-input::placeholder { color: #888; }
+
+        #categories-list { flex-grow: 1; overflow-y: auto; padding: 15px 20px; }
+        #categories-list::-webkit-scrollbar { width: 5px; }
+        #categories-list::-webkit-scrollbar-thumb { background: #444; }
+
+        .category { margin-bottom: 25px; }
+        .category-header {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 16px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px;
+        }
+
+        .stratagem-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+        .stratagem-item {
+            aspect-ratio: 1; background-color: #2a2c31; border: 2px solid #444;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: border-color 0.2s; position: relative; user-select: none;
+        }
+        .stratagem-item img { width: 80%; height: 80%; object-fit: contain; pointer-events: none; }
+        .stratagem-item.active { border-color: #ffe800; background-color: #3a3c41; }
+        .stratagem-item:not(.active) { opacity: 0.4; }
+
+        /* --- ОСНОВНАЯ ПАНЕЛЬ --- */
+        #main-content {
+            flex-grow: 1; display: flex; flex-direction: column; position: relative; z-index: 1;
+        }
+
+        #top-bar {
+            display: flex; justify-content: space-between; padding: 20px 30px;
+            font-weight: 700; font-size: 18px; border-bottom: 1px solid #222;
+            position: relative; z-index: 20; background-color: #0f1115;
+        }
+
+        .mode-toggles { display: flex; gap: 20px; }
+        .mode-btn { cursor: pointer; color: #888; transition: color 0.2s; }
+        .mode-btn.active { color: #ffe800; text-shadow: 0 0 10px rgba(255, 232, 0, 0.3); }
+        .mode-btn:hover { color: #fff; }
+
+        .settings-btn { color: #ffe800; cursor: pointer; transition: transform 0.2s; }
+        .settings-btn:hover { transform: scale(1.05); }
+
+        #game-area {
+            flex-grow: 1; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; position: relative;
+            background: linear-gradient(rgba(15, 17, 21, 0.85), rgba(15, 17, 21, 0.85)), url('img/background1.png') center/cover no-repeat;
+        }
+
+        #stats-panel {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 600px; margin-bottom: 40px;
+        }
+
+        .stat-block { text-align: center; font-weight: 700; }
+        .stat-label { font-size: 24px; color: #fff; text-transform: uppercase; }
+        .stat-value { font-size: 54px; color: #ffe800; line-height: 1; text-shadow: 0 0 15px rgba(255,232,0,0.3); }
+        .record-label { font-size: 16px; color: #888; margin-top: 5px; user-select: none; }
+        .record-label span { color: #ffe800; }
+
+        #practice-controls {
+            display: none; text-align: center; margin-bottom: 40px; color: #aaa; font-size: 20px;
+        }
+        .controls-hint { color: #fff; background: #333; padding: 2px 8px; border-radius: 4px; border: 1px solid #555; }
+
+        #upcoming-container {
+            display: none; flex-direction: row; gap: 10px; margin-bottom: 15px; height: 50px;
+        }
+        
+        .upcoming-item {
+            width: 50px; height: 50px; background-color: #2a2c31; border: 2px solid #444;
+            display: flex; align-items: center; justify-content: center; opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+        
+        .upcoming-item img {
+            width: 80%; height: 80%; object-fit: contain; pointer-events: none;
+        }
+
+        #timer-bar-container {
+            width: 100%; height: 45px; background-color: #222; position: relative;
+            display: flex; align-items: center; justify-content: center;
+            border-top: 3px solid #000; border-bottom: 3px solid #000;
+        }
+        #timer-fill {
+            position: absolute; left: 0; top: 0; height: 100%; background-color: #ffe800;
+            width: 100%; transition: background-color 0.3s;
+        }
+        #timer-text { position: relative; z-index: 1; color: #000; font-weight: 700; font-size: 22px; letter-spacing: 2px; }
+
+        #active-stratagem { margin-top: 50px; display: flex; flex-direction: column; align-items: center; min-height: 200px; }
+        #active-img { width: 100px; height: 100px; object-fit: contain; margin-bottom: 15px; }
+        #active-name { font-size: 28px; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+
+        #arrows-container { display: flex; gap: 10px; }
+        .arrow { font-size: 50px; color: #444; font-weight: bold; font-family: sans-serif; }
+        .arrow.active { color: #ffe800; text-shadow: 0 0 15px #ffe800; }
+        .arrow.completed { color: #fff; }
+        
+        .error-state { color: #ff0000 !important; text-shadow: 0 0 15px #ff0000 !important; }
+        .shake { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
+        
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+
+        #overlay {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 17, 21, 0.95);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;
+        }
+        #overlay h1 { font-size: 60px; margin-bottom: 20px; color: #ffe800; text-shadow: 0 0 20px rgba(255,232,0,0.4); text-align: center; }
+        #overlay p { font-size: 24px; color: #ccc; margin-bottom: 10px; text-align: center; }
+
+        /* --- ОКНО НАСТРОЕК --- */
+        #settings-modal {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.85); z-index: 100;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .settings-box {
+            background: #1a1c20; border: 4px solid #ffe800; padding: 40px; width: 450px;
+            box-shadow: 0 0 30px rgba(255, 232, 0, 0.2);
+        }
+        .settings-box h2 {
+            font-size: 32px; color: #ffe800; margin-bottom: 30px; text-align: center; text-transform: uppercase;
+        }
+        .setting-row { margin-bottom: 25px; display: flex; flex-direction: column; gap: 10px; }
+        .setting-row label { font-size: 18px; color: #fff; }
+        .setting-row select, .setting-row input[type="number"] {
+            font-size: 18px; padding: 12px; background: #2a2c31; color: #fff; border: 2px solid #444; outline: none; cursor: pointer;
+        }
+        .setting-row select:focus, .setting-row input[type="number"]:focus { border-color: #ffe800; }
+        
+        #btn-close-settings {
+            width: 100%; font-size: 20px; padding: 15px; background: #ffe800; color: #000; border: none; cursor: pointer; text-transform: uppercase; margin-top: 10px; transition: background 0.2s;
+        }
+        #btn-close-settings:hover { background: #fff; }
+        
+        .key-btn {
+            background: #2a2c31; border: 2px solid #444; color: #fff;
+            width: 55px; height: 55px; font-size: 20px; font-weight: bold;
+            cursor: pointer; border-radius: 5px; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .key-btn:hover { border-color: #ffe800; color: #ffe800; }
+        .key-btn.recording { background: #ffe800; color: #000; border-color: #fff; animation: blinker 1s infinite; }
+        
+        @keyframes blinker { 50% { opacity: 0.5; } }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <label class="checkbox-container">
+                <span id="lbl-select-all">ВЫБРАТЬ ВСЕ</span>
+                <input type="checkbox" id="select-all">
+            </label>
+        </div>
+        <div id="search-container">
+            <input type="text" id="search-input" placeholder="Поиск стратагем...">
+        </div>
+        <div id="categories-list"></div>
+    </div>
+
+    <div id="main-content">
+        <div id="top-bar">
+            <div class="mode-toggles">
+                <span id="btn-mode-game" class="mode-btn active" onclick="setMode('game')">ИГРА</span>
+                <span id="btn-mode-practice" class="mode-btn" onclick="setMode('practice')">ТРЕНИРОВКА</span>
+            </div>
+            <span class="settings-btn" id="btn-settings" onclick="openSettings()">НАСТРОЙКИ ⚙</span>
+        </div>
+
+        <div id="game-area">
+            <div id="stats-panel">
+                <div class="stat-block">
+                    <div class="stat-label crt-text" id="lbl-round">Раунд</div>
+                    <div class="stat-value" id="ui-round">1</div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-value" id="ui-score">0</div>
+                    <div class="stat-label crt-text" id="lbl-score">Счет</div>
+                    <div class="record-label"><span id="lbl-record">Рекорд : </span><span id="ui-record">0</span></div>
+                </div>
+            </div>
+
+            <div id="practice-controls">
+                <div id="practice-controls-hint"><span class="controls-hint">[Q] / [L1]</span> Пред. &nbsp;&nbsp;|&nbsp;&nbsp; <span class="controls-hint">[E] / [R1]</span> След.</div>
+            </div>
+
+            <!-- Блок следующих стратагем -->
+            <div id="upcoming-container"></div>
+
+            <div id="timer-bar-container">
+                <div id="timer-fill"></div>
+                <div id="timer-text">ВЫБЕРИТЕ РЕЖИМ</div>
+            </div>
+
+            <div id="active-stratagem">
+                <img id="active-img" src="" alt="" onerror="this.style.opacity='0'">
+                <div id="active-name">выбери стратаген слева</div>
+                <div id="arrows-container"></div>
+            </div>
+
+            <div id="overlay">
+                <h1 id="overlay-title">ОЖИДАНИЕ ВВОДА</h1>
+                <p id="overlay-desc">Нажмите любую клавишу перемещения</p>
+                <p id="overlay-sub" style="font-size: 18px; color: #666;">Нажмите [ESC] чтобы прервать сессию</p>
+            </div>
+        </div>
+        
+        <!-- МОДАЛЬНОЕ ОКНО НАСТРОЕК -->
+        <div id="settings-modal" class="hidden">
+            <div class="settings-box">
+                <h2 id="settings-title">НАСТРОЙКИ</h2>
+                
+                <div class="setting-row">
+                    <label id="lbl-lang">ЯЗЫК / LANGUAGE:</label>
+                    <select id="setting-lang" onchange="changeLang(this.value)">
+                        <option value="ru">Русский</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                
+                <div class="setting-row">
+                    <label id="lbl-input">УПРАВЛЕНИЕ / INPUT:</label>
+                    <select id="setting-input" onchange="changeInputMode(this.value)">
+                        <option value="both" id="opt-input-both">WASD + Стрелки</option>
+                        <option value="wasd" id="opt-input-wasd">Только WASD</option>
+                        <option value="arrows" id="opt-input-arrows">Только Стрелки</option>
+                        <option value="custom" id="opt-input-custom">Свои кнопки</option>
+                    </select>
+                </div>
+
+                <div class="setting-row">
+                    <label id="lbl-timer-speed">СКОРОСТЬ ТАЙМЕРА (СЕК):</label>
+                    <input type="number" id="setting-timer-speed" min="1" max="100" onchange="changeTimerSpeed(this.value)">
+                </div>
+
+                <div class="setting-row" id="custom-keys-row" style="display: none; align-items: center;">
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 5px; margin-top: 10px;">
+                        <button class="key-btn" id="btn-key-up" onclick="recordKey('up')">W</button>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="key-btn" id="btn-key-left" onclick="recordKey('left')">A</button>
+                            <button class="key-btn" id="btn-key-down" onclick="recordKey('down')">S</button>
+                            <button class="key-btn" id="btn-key-right" onclick="recordKey('right')">D</button>
+                        </div>
+                    </div>
+                    <p id="lbl-custom-hint" style="font-size: 14px; color: #888; margin-top: 5px; text-align: center;">Кликните на кнопку, чтобы назначить</p>
+                </div>
+                
+                <button id="btn-close-settings" onclick="closeSettings()">ЗАКРЫТЬ</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const i18n = {
+        ru: {
+            pageTitle: "Stratagem Trainer Helldivers 2",
+            selectAll: "ВЫБРАТЬ ВСЕ", search: "Поиск стратагем...", gameMode: "ИГРА", practiceMode: "ТРЕНИРОВКА",
+            settings: "НАСТРОЙКИ ⚙", round: "Раунд", score: "Счет", record: "Рекорд : ",
+            practiceHint: "<span class='controls-hint'>[Q] / [L1]</span> Пред. &nbsp;&nbsp;|&nbsp;&nbsp; <span class='controls-hint'>[E] / [R1]</span> След.",
+            selectMode: "ВЫБЕРИТЕ РЕЖИМ", loading: "выбери стратаген слева", awaitingInput: "ОЖИДАНИЕ ВВОДА",
+            pressAnyKey: "Нажмите любую клавишу перемещения", pressEsc: "Нажмите [ESC] чтобы прервать сессию",
+            timeOut: "ВРЕМЯ ИСТЕКАЕТ!", traitor: "ОБНАРУЖЕН ПРЕДАТЕЛЬ !", gameOver: "ИГРА ОКОНЧЕНА",
+            restart: "Счет: {s}. Нажмите ПРОБЕЛ (или A) для рестарта.", practiceActive: "РЕЖИМ ТРЕНИРОВКИ",
+            alertSelect: "Выберите стратагемы слева!", settingsTitle: "НАСТРОЙКИ", langLabel: "ЯЗЫК:",
+            inputLabel: "УПРАВЛЕНИЕ:", close: "ЗАКРЫТЬ", timerSpeed: "СКОРОСТЬ ТАЙМЕРА (СЕК):",
+            inputBoth: "WASD + Стрелки", inputWasd: "Только WASD", inputArrows: "Только Стрелки", inputCustom: "Свои кнопки",
+            customHint: "Кликните на кнопку, чтобы назначить. Нажмите ESC для отмены.",
+            cat1: "ПАТРИОТИЧЕСКИЙ ЦЕНТР АДМИНИСТРИРОВАНИЯ", cat2: "ОРБИТАЛЬНЫЕ ПУШКИ", cat3: "АНГАР", cat4: "МОСТИК",
+            cat5: "ИНЖЕНЕРНЫЙ ОТСЕК", cat6: "РОБОТОТЕХНИЧЕСКИЙ ЦЕХ", cat7: "ЗАДАНИЯ / ОБЩИЕ"
+        },
+        en: {
+            pageTitle: "Stratagem Trainer Helldivers 2",
+            selectAll: "SELECT ALL", search: "Search stratagems...", gameMode: "PLAY", practiceMode: "PRACTICE",
+            settings: "SETTINGS ⚙", round: "Round", score: "Score", record: "Record : ",
+            practiceHint: "<span class='controls-hint'>[Q] / [L1]</span> Prev. &nbsp;&nbsp;|&nbsp;&nbsp; <span class='controls-hint'>[E] / [R1]</span> Next.",
+            selectMode: "SELECT MODE", loading: "Select a stratagem on the left", awaitingInput: "AWAITING INPUT",
+            pressAnyKey: "Press any movement key", pressEsc: "Press [ESC] to abort session",
+            timeOut: "TIME IS RUNNING OUT!", traitor: "TRAITOR DETECTED !", gameOver: "GAME OVER",
+            restart: "Score: {s}. Press SPACE (or A) to restart.", practiceActive: "PRACTICE MODE",
+            alertSelect: "Select stratagems on the left!", settingsTitle: "SETTINGS", langLabel: "LANGUAGE:",
+            inputLabel: "INPUT SETTINGS:", close: "CLOSE", timerSpeed: "TIMER SPEED (SEC):",
+            inputBoth: "WASD + Arrows", inputWasd: "WASD Only", inputArrows: "Arrows Only", inputCustom: "Custom Keys",
+            customHint: "Click a button to rebind. Press ESC to cancel.",
+            cat1: "PATRIOTIC ADMINISTRATION CENTER", cat2: "ORBITAL CANNONS", cat3: "HANGAR", cat4: "BRIDGE",
+            cat5: "ENGINEERING BAY", cat6: "ROBOTICS WORKSHOP", cat7: "MISSIONS / GENERAL"
+        }
+    };
+
+    const db = [
+        { id: 'mg_43_machine_gun', name_ru: 'MG-43 Пулемет', name_en: 'MG-43 Machine Gun', cat: 'cat1', seq: ['down', 'left', 'down', 'up', 'right'], img: 'img/mg_43_machine_gun.svg' },
+        { id: 'apw_1_anti_materiel_rifle', name_ru: 'Крупнокалиберная винтовка APW-1', name_en: 'APW-1 Anti-Materiel Rifle', cat: 'cat1', seq: ['down', 'left', 'right', 'up', 'down'], img: 'img/apw_1_anti_materiel_rifle.svg' },
+        { id: 'm_105_stalwart', name_ru: 'M-105 Оплот', name_en: 'M-105 Stalwart', cat: 'cat1', seq: ['down', 'left', 'down', 'up', 'up', 'left'], img: 'img/m_105_stalwart.svg' },
+        { id: 'eat_17_expendable_anti_tank', name_ru: 'Одноразовый гранатомет EAT-17', name_en: 'EAT-17 Expendable Anti-Tank', cat: 'cat1', seq: ['down', 'down', 'left', 'up', 'right'], img: 'img/eat_17_expendable_anti_tank.svg' },
+        { id: 'gr_8_recoilless_rifle', name_ru: 'Безоткатная винтовка GR-8', name_en: 'GR-8 Recoilless Rifle', cat: 'cat1', seq: ['down', 'left', 'right', 'right', 'left'], img: 'img/gr_8_recoilless_rifle.svg' },
+        { id: 'flam_40_flamethrower', name_ru: 'Огнемет FLAM-40', name_en: 'FLAM-40 Flamethrower', cat: 'cat1', seq: ['down', 'left', 'up', 'down', 'up'], img: 'img/flam_40_flamethrower.svg' },
+        { id: 'ac_8_autocannon', name_ru: 'Автопушка AC-8', name_en: 'AC-8 Autocannon', cat: 'cat1', seq: ['down', 'left', 'down', 'up', 'up', 'right'], img: 'img/ac_8_autocannon.svg' },
+        { id: 'mg_206_heavy_machine_gun', name_ru: 'Тяжелый пулемет MG-206', name_en: 'MG-206 Heavy Machine Gun', cat: 'cat1', seq: ['down', 'left', 'up', 'down', 'down'], img: 'img/mg_206_heavy_machine_gun.svg' },
+        { id: 'rl_77_airburst_rocket_launcher', name_ru: 'Ракетница RL-77', name_en: 'RL-77 Airburst Rocket Launcher', cat: 'cat1', seq: ['down', 'up', 'up', 'left', 'right'], img: 'img/rl_77_airburst_rocket_launcher.svg' },
+        { id: 'mls_4x_commando', name_ru: 'Ракетница Коммандо MLS-4X', name_en: 'MLS-4X Commando', cat: 'cat1', seq: ['down', 'left', 'up', 'down', 'right'], img: 'img/mls_4x_commando.svg' },
+        { id: 'tx_41_sterilizer', name_ru: 'Стерилизатор TX-41', name_en: 'TX-41 Sterilizer', cat: 'cat1', seq: ['down', 'left', 'up', 'down', 'left'], img: 'img/tx_41_sterilizer.svg' },
+
+        { id: 'orbital_gatling_barrage', name_ru: 'Орбитальный залп из гатлинга', name_en: 'Orbital Gatling Barrage', cat: 'cat2', seq: ['right', 'down', 'left', 'up', 'up'], img: 'img/orbital_gatling_barrage.svg' },
+        { id: 'orbital_airburst_strike', name_ru: 'Орбитальный воздушный разрыв', name_en: 'Orbital Airburst Strike', cat: 'cat2', seq: ['right', 'right', 'right'], img: 'img/orbital_airburst_strike.svg' },
+        { id: 'orbital_120mm_he_barrage', name_ru: 'Орбитальный 120-мм залп', name_en: 'Orbital 120mm HE Barrage', cat: 'cat2', seq: ['right', 'right', 'down', 'left', 'right', 'down'], img: 'img/orbital_120mm_he_barrage.svg' },
+        { id: 'orbital_380mm_he_barrage', name_ru: 'Орбитальный 380-мм залп', name_en: 'Orbital 380mm HE Barrage', cat: 'cat2', seq: ['right', 'down', 'up', 'up', 'left', 'down', 'down'], img: 'img/orbital_380mm_he_barrage.svg' },
+        { id: 'orbital_walking_barrage', name_ru: 'Орбитальный блуждающий залп', name_en: 'Orbital Walking Barrage', cat: 'cat2', seq: ['right', 'down', 'right', 'down', 'right', 'down'], img: 'img/orbital_walking_barrage.svg' },
+        { id: 'orbital_laser', name_ru: 'Орбитальный лазер', name_en: 'Orbital Laser', cat: 'cat2', seq: ['right', 'down', 'up', 'right', 'down'], img: 'img/orbital_laser.svg' },
+        { id: 'orbital_railcannon_strike', name_ru: 'Орбитальный удар из рельсотрона', name_en: 'Orbital Railcannon Strike', cat: 'cat2', seq: ['right', 'up', 'down', 'down', 'right'], img: 'img/orbital_railcannon_strike.svg' },
+        { id: 'orbital_napalm_barrage', name_ru: 'Орбитальный напалмовый залп', name_en: 'Orbital Napalm Barrage', cat: 'cat2', seq: ['right', 'right', 'down', 'left', 'right', 'up'], img: 'img/orbital_napalm_barrage.svg' },
+
+        { id: 'eagle_strafing_run', name_ru: 'Орел: Бреющий полет', name_en: 'Eagle Strafing Run', cat: 'cat3', seq: ['up', 'right', 'right'], img: 'img/eagle_strafing_run.svg' },
+        { id: 'eagle_airstrike', name_ru: 'Орел: Авиаудар', name_en: 'Eagle Airstrike', cat: 'cat3', seq: ['up', 'right', 'down', 'right'], img: 'img/eagle_airstrike.svg' },
+        { id: 'eagle_cluster_bomb', name_ru: 'Орел: Кассетная бомба', name_en: 'Eagle Cluster Bomb', cat: 'cat3', seq: ['up', 'right', 'down', 'down', 'right'], img: 'img/eagle_cluster_bomb.svg' },
+        { id: 'eagle_napalm_airstrike', name_ru: 'Орел: Напалмовый авиаудар', name_en: 'Eagle Napalm Airstrike', cat: 'cat3', seq: ['up', 'right', 'down', 'up'], img: 'img/eagle_napalm_airstrike.svg' },
+        { id: 'lift_850_jump_pack', name_ru: 'Рюкзак прыжкового двигателя', name_en: 'LIFT-850 Jump Pack', cat: 'cat3', seq: ['down', 'up', 'up', 'down', 'up'], img: 'img/lift_850_jump_pack.svg' },
+        { id: 'eagle_smoke_strike', name_ru: 'Орел: Дымовой удар', name_en: 'Eagle Smoke Strike', cat: 'cat3', seq: ['up', 'right', 'up', 'down'], img: 'img/eagle_smoke_strike.svg' },
+        { id: 'eagle_110mm_rocket_pods', name_ru: 'Орел: 110-мм ракеты', name_en: 'Eagle 110mm Rocket Pods', cat: 'cat3', seq: ['up', 'right', 'up', 'left'], img: 'img/eagle_110mm_rocket_pods.svg' },
+        { id: 'eagle_500kg_bomb', name_ru: 'Орел: Бомба 500кг', name_en: 'Eagle 500kg Bomb', cat: 'cat3', seq: ['up', 'right', 'down', 'down', 'down'], img: 'img/eagle_500kg_bomb.svg' },
+
+        { id: 'orbital_precision_strike', name_ru: 'Орбитальный точный удар', name_en: 'Orbital Precision Strike', cat: 'cat4', seq: ['right', 'right', 'up'], img: 'img/orbital_precision_strike.svg' },
+        { id: 'orbital_gas_strike', name_ru: 'Орбитальный газовый удар', name_en: 'Orbital Gas Strike', cat: 'cat4', seq: ['right', 'right', 'down', 'right'], img: 'img/orbital_gas_strike.svg' },
+        { id: 'orbital_ems_strike', name_ru: 'Орбитальный ЭМИ-удар', name_en: 'Orbital EMS Strike', cat: 'cat4', seq: ['right', 'right', 'left', 'down'], img: 'img/orbital_ems_strike.svg' },
+        { id: 'orbital_smoke_strike', name_ru: 'Орбитальный дымовой удар', name_en: 'Orbital Smoke Strike', cat: 'cat4', seq: ['right', 'right', 'down', 'up'], img: 'img/orbital_smoke_strike.svg' },
+        { id: 'e_mg_101_hmg_emplacement', name_ru: 'Установка тяжелого пулемета', name_en: 'E-MG-101 HMG Emplacement', cat: 'cat4', seq: ['down', 'up', 'left', 'right', 'right', 'left'], img: 'img/e_mg_101_hmg_emplacement.svg' },
+        { id: 'fx_12_shield_generator_relay', name_ru: 'Генератор щита FX-12', name_en: 'FX-12 Shield Generator Relay', cat: 'cat4', seq: ['down', 'down', 'left', 'right', 'left', 'right'], img: 'img/fx_12_shield_generator_relay.svg' },
+        { id: 'a_arc_3_tesla_tower', name_ru: 'Башня Теслы A/ARC-3', name_en: 'A/ARC-3 Tesla Tower', cat: 'cat4', seq: ['down', 'up', 'right', 'up', 'left', 'right'], img: 'img/a_arc_3_tesla_tower.svg' },
+
+        { id: 'md_6_anti_personnel_minefield', name_ru: 'Минное поле MD-6', name_en: 'MD-6 Anti-Personnel Minefield', cat: 'cat5', seq: ['down', 'left', 'up', 'right'], img: 'img/md_6_anti_personnel_minefield.svg' },
+        { id: 'b_1_supply_pack', name_ru: 'Рюкзак снабжения B-1', name_en: 'B-1 Supply Pack', cat: 'cat5', seq: ['down', 'left', 'down', 'up', 'up', 'down'], img: 'img/b_1_supply_pack.svg' },
+        { id: 'gl_21_grenade_launcher', name_ru: 'Гранатомет GL-21', name_en: 'GL-21 Grenade Launcher', cat: 'cat5', seq: ['down', 'left', 'up', 'left', 'down'], img: 'img/gl_21_grenade_launcher.svg' },
+        { id: 'las_98_laser_cannon', name_ru: 'Лазерная пушка LAS-98', name_en: 'LAS-98 Laser Cannon', cat: 'cat5', seq: ['down', 'left', 'down', 'up', 'left'], img: 'img/las_98_laser_cannon.svg' },
+        { id: 'md_i4_incendiary_mines', name_ru: 'Зажигательные мины MD-14', name_en: 'MD-14 Incendiary Mines', cat: 'cat5', seq: ['down', 'left', 'left', 'down'], img: 'img/md_i4_incendiary_mines.svg' },
+        { id: 'ax_las_5_rover', name_ru: 'Дрон «Гвардеец» (Лазер)', name_en: 'AX/LAS-5 "Guard Dog" Rover', cat: 'cat5', seq: ['down', 'up', 'left', 'up', 'right', 'right'], img: 'img/ax_las_5_rover.svg' },
+        { id: 'sh_20_ballistic_shield_backpack', name_ru: 'Баллистический щит SH-20', name_en: 'SH-20 Ballistic Shield Backpack', cat: 'cat5', seq: ['down', 'left', 'down', 'down', 'up', 'left'], img: 'img/sh_20_ballistic_shield_backpack.svg' },
+        { id: 'arc_3_arc_thrower', name_ru: 'Дуговой излучатель ARC-3', name_en: 'ARC-3 Arc Thrower', cat: 'cat5', seq: ['down', 'right', 'down', 'up', 'left', 'left'], img: 'img/arc_3_arc_thrower.svg' },
+        { id: 'las_99_quasar_cannon', name_ru: 'Квазар-пушка LAS-99', name_en: 'LAS-99 Quasar Cannon', cat: 'cat5', seq: ['down', 'down', 'up', 'left', 'right'], img: 'img/las_99_quasar_cannon.svg' },
+        { id: 'sh_32_shield_generator_pack', name_ru: 'Генератор щита SH-32', name_en: 'SH-32 Shield Generator Pack', cat: 'cat5', seq: ['down', 'up', 'left', 'right', 'left', 'right'], img: 'img/sh_32_shield_generator_pack.svg' },
+        { id: 'md_17_anti_tank_mines', name_ru: 'Противотанковые мины MD-17', name_en: 'MD-17 Anti-Tank Mines', cat: 'cat5', seq: ['down', 'left', 'up', 'up'], img: 'img/md_17_anti_tank_mines.svg' },
+        { id: 'ax_ar_23_guard_dog', name_ru: 'Дрон «Гвардеец» (Винтовка)', name_en: 'AX/AR-23 "Guard Dog"', cat: 'cat5', seq: ['down', 'up', 'left', 'up', 'right', 'down'], img: 'img/ax_ar_23_guard_dog.svg' },
+        { id: 'ax_tx_13_dog_breath', name_ru: 'Дрон «Гвардеец» (Газ)', name_en: 'AX/TX-13 "Guard Dog" Dog Breath', cat: 'cat5', seq: ['down', 'up', 'left', 'up', 'right', 'up'], img: 'img/ax_tx_13_dog_breath.svg' },
+        { id: 'sh_51_directional_shield', name_ru: 'Направленный щит SH-51', name_en: 'SH-51 Directional Shield', cat: 'cat5', seq: ['down', 'up', 'left', 'right', 'up', 'up'], img: 'img/sh_51_directional_shield.svg' },
+
+        { id: 'a_mg_43_machine_gun_sentry', name_ru: 'Пулеметная турель', name_en: 'Machine Gun Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'right', 'up'], img: 'img/a_mg_43_machine_gun_sentry.svg' },
+        { id: 'a_g_16_gatling_sentry', name_ru: 'Турель «Гатлинг»', name_en: 'Gatling Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'left'], img: 'img/a_g_16_gatling_sentry.svg' },
+        { id: 'a_m_12_mortar_sentry', name_ru: 'Минометная турель', name_en: 'Mortar Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'right', 'down'], img: 'img/a_m_12_mortar_sentry.svg' },
+        { id: 'a_ac_8_autocannon_sentry', name_ru: 'Автопушечная турель', name_en: 'Autocannon Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'up', 'left', 'up'], img: 'img/a_ac_8_autocannon_sentry.svg' },
+        { id: 'a_mls_4x_rocket_sentry', name_ru: 'Ракетная турель', name_en: 'Rocket Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'right', 'left'], img: 'img/a_mls_4x_rocket_sentry.svg' },
+        { id: 'a_m_23_ems_mortar_sentry', name_ru: 'ЭМИ-минометная турель', name_en: 'EMS Mortar Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'down', 'right'], img: 'img/a_m_23_ems_mortar_sentry.svg' },
+        { id: 'exo_45_patriot_exosuit', name_ru: 'Экзокостюм «Патриот»', name_en: 'EXO-45 Patriot Exosuit', cat: 'cat6', seq: ['left', 'down', 'right', 'up', 'left', 'down', 'down'], img: 'img/exo_45_patriot_exosuit.svg' },
+        { id: 'exo_49_emancipator_exosuit', name_ru: 'Экзокостюм «Освободитель»', name_en: 'EXO-49 Emancipator Exosuit', cat: 'cat6', seq: ['left', 'down', 'right', 'up', 'left', 'down', 'up'], img: 'img/exo_49_emancipator_exosuit.svg' },
+
+        { id: 'reinforce', name_ru: 'Подкрепление', name_en: 'Reinforce', cat: 'cat7', seq: ['up', 'down', 'right', 'left', 'up'], img: 'img/reinforce.svg' },
+        { id: 'resupply', name_ru: 'Припасы', name_en: 'Resupply', cat: 'cat7', seq: ['down', 'down', 'up', 'right'], img: 'img/resupply.svg' },
+        { id: 'sos_beacon', name_ru: 'Маяк SOS', name_en: 'SOS Beacon', cat: 'cat7', seq: ['up', 'down', 'right', 'up'], img: 'img/sos_beacon.svg' },
+        { id: 'nux_223_hellbomb', name_ru: 'Адская бомба', name_en: 'Hellbomb', cat: 'cat7', seq: ['down', 'up', 'left', 'down', 'up', 'right', 'down', 'up'], img: 'img/nux_223_hellbomb.svg' },
+        { id: 'seaf_artillery', name_ru: 'Артиллерия SEAF', name_en: 'SEAF Artillery', cat: 'cat7', seq: ['right', 'up', 'up', 'down'], img: 'img/seaf_artillery.svg' }
+    ];
+
+    const arrowSymbols = { 'up': '🡅', 'down': '🡇', 'left': '🡄', 'right': '🡆' };
+    
+    let currentLang = localStorage.getItem('stratagem_lang') || 'ru';
+    let currentInputMode = localStorage.getItem('stratagem_input') || 'both';
+    let customKeys = JSON.parse(localStorage.getItem('stratagem_custom_keys')) || { up: 'KeyW', down: 'KeyS', left: 'KeyA', right: 'KeyD' };
+    let timerSpeed = parseInt(localStorage.getItem('stratagem_timer_speed')) || 10;
+    
+    document.getElementById('setting-lang').value = currentLang;
+    document.getElementById('setting-input').value = currentInputMode;
+    document.getElementById('setting-timer-speed').value = timerSpeed;
+
+    // РАЗДЕЛЬНЫЕ ПУЛЫ СТРАТАГЕМ
+    let activePoolGame = [...db]; 
+    let activePoolPractice = []; // В тренировке изначально всё выключено
+    
+    let state = 'menu'; 
+    let selectedMode = 'game'; 
+    let score = 0, round = 1, stratagemsInRound = 0;
+    let currentStratagem = null, currentIndex = 0;
+    let inputLocked = false;
+    let practiceIndex = 0;
+    let recordingKey = null;
+
+    let MAX_TIME = timerSpeed * 1000;
+    let timeLeft = MAX_TIME, lastTime = 0, timerId;
+    let record = localStorage.getItem('stratagem_record') || 0;
+    
+    // Очередь для показа следующих стратагем
+    let upcomingQueue = [];
+    const UPCOMING_COUNT = 4;
+
+    // --- ФУНКЦИИ ЛОКАЛИЗАЦИИ И UI ---
+    function t(key) { return i18n[currentLang][key]; }
+    
+    function getActivePool() {
+        return selectedMode === 'game' ? activePoolGame : activePoolPractice;
+    }
+
+    function formatKeyCode(code) {
+        if (!code) return '';
+        if (code.startsWith('Key')) return code.replace('Key', '');
+        if (code.startsWith('Digit')) return code.replace('Digit', '');
+        if (code.startsWith('Arrow')) {
+            const arr = { 'ArrowUp': '↑', 'ArrowDown': '↓', 'ArrowLeft': '←', 'ArrowRight': '→' };
+            return arr[code];
+        }
+        if (code === 'Space') return 'SPACE';
+        if (code.startsWith('Shift')) return 'SHIFT';
+        if (code.startsWith('Control')) return 'CTRL';
+        if (code.startsWith('Alt')) return 'ALT';
+        return code.toUpperCase();
+    }
+
+    function updateLanguageUI() {
+        document.documentElement.lang = currentLang;
+        document.title = t('pageTitle');
+        
+        document.getElementById('lbl-select-all').textContent = t('selectAll');
+        document.getElementById('search-input').placeholder = t('search');
+        document.getElementById('btn-mode-game').textContent = t('gameMode');
+        document.getElementById('btn-mode-practice').textContent = t('practiceMode');
+        document.getElementById('btn-settings').textContent = t('settings');
+        document.getElementById('lbl-round').textContent = t('round');
+        document.getElementById('lbl-score').textContent = t('score');
+        document.getElementById('lbl-record').textContent = t('record');
+        document.getElementById('ui-record').textContent = record;
+        
+        document.getElementById('practice-controls-hint').innerHTML = t('practiceHint');
+        document.getElementById('overlay-title').textContent = t('awaitingInput');
+        document.getElementById('overlay-desc').textContent = t('pressAnyKey');
+        document.getElementById('overlay-sub').textContent = t('pressEsc');
+        
+        document.getElementById('settings-title').textContent = t('settingsTitle');
+        document.getElementById('lbl-lang').textContent = t('langLabel');
+        document.getElementById('lbl-input').textContent = t('inputLabel');
+        document.getElementById('lbl-timer-speed').textContent = t('timerSpeed');
+        document.getElementById('btn-close-settings').textContent = t('close');
+        
+        document.getElementById('opt-input-both').textContent = t('inputBoth');
+        document.getElementById('opt-input-wasd').textContent = t('inputWasd');
+        document.getElementById('opt-input-arrows').textContent = t('inputArrows');
+        document.getElementById('opt-input-custom').textContent = t('inputCustom');
+        document.getElementById('lbl-custom-hint').textContent = t('customHint');
+
+        if (state === 'menu') {
+            document.getElementById('timer-text').textContent = t('selectMode');
+            document.getElementById('timer-text').style.color = '#fff';
+            document.getElementById('timer-fill').style.backgroundColor = '#222';
+        } else if (state === 'practice') {
+            document.getElementById('timer-text').textContent = t('practiceActive');
+            document.getElementById('timer-text').style.color = '#888';
+            document.getElementById('timer-fill').style.backgroundColor = '#2a2c31';
+        }
+        
+        if (currentStratagem) {
+            document.getElementById('active-name').textContent = currentLang === 'ru' ? currentStratagem.name_ru : currentStratagem.name_en;
+        } else {
+            document.getElementById('active-name').textContent = t('loading');
+        }
+
+        renderSidebar(); 
+        document.getElementById('select-all').checked = (getActivePool().length === db.length);
+        updateCustomKeysUI();
+    }
+
+    function updateCustomKeysUI() {
+        document.getElementById('btn-key-up').textContent = formatKeyCode(customKeys.up);
+        document.getElementById('btn-key-down').textContent = formatKeyCode(customKeys.down);
+        document.getElementById('btn-key-left').textContent = formatKeyCode(customKeys.left);
+        document.getElementById('btn-key-right').textContent = formatKeyCode(customKeys.right);
+        document.getElementById('custom-keys-row').style.display = (currentInputMode === 'custom') ? 'flex' : 'none';
+    }
+
+    function openSettings() {
+        cancelAnimationFrame(timerId); 
+        state = 'settings';
+        document.getElementById('settings-modal').classList.remove('hidden');
+        updateCustomKeysUI();
+    }
+    
+    function closeSettings() {
+        if (recordingKey) {
+            document.getElementById('btn-key-' + recordingKey).classList.remove('recording');
+            recordingKey = null;
+            updateCustomKeysUI();
+        }
+        document.getElementById('settings-modal').classList.add('hidden');
+        if (selectedMode === 'game' && state !== 'playing') {
+            showOverlay(t('awaitingInput'), t('pressAnyKey')); 
+        } else if (selectedMode === 'practice') {
+            state = 'practice';
+        }
+    }
+
+    function changeLang(val) {
+        currentLang = val;
+        localStorage.setItem('stratagem_lang', val);
+        updateLanguageUI();
+    }
+
+    function changeInputMode(val) {
+        currentInputMode = val;
+        localStorage.setItem('stratagem_input', val);
+        updateCustomKeysUI();
+    }
+
+    function changeTimerSpeed(val) {
+        timerSpeed = parseInt(val) || 10;
+        if (timerSpeed < 1) timerSpeed = 1;
+        document.getElementById('setting-timer-speed').value = timerSpeed;
+        localStorage.setItem('stratagem_timer_speed', timerSpeed);
+        MAX_TIME = timerSpeed * 1000;
+    }
+
+    function recordKey(dir) {
+        if (recordingKey) {
+            document.getElementById('btn-key-' + recordingKey).classList.remove('recording');
+            updateCustomKeysUI(); 
+        }
+        recordingKey = dir;
+        const btn = document.getElementById('btn-key-' + dir);
+        btn.textContent = '...';
+        btn.classList.add('recording');
+    }
+
+    // --- БОКОВАЯ ПАНЕЛЬ И ВЫБОР ---
+    function renderSidebar() {
+        const container = document.getElementById('categories-list');
+        container.innerHTML = '';
+        const categories = [...new Set(db.map(s => s.cat))];
+        const searchQuery = document.getElementById('search-input').value.toLowerCase();
+        const currentPool = getActivePool();
+
+        categories.forEach(catId => {
+            const catStrats = db.filter(s => s.cat === catId && (currentLang === 'ru' ? s.name_ru : s.name_en).toLowerCase().includes(searchQuery));
+            if (catStrats.length === 0) return;
+
+            const catActiveCount = catStrats.filter(s => currentPool.some(a => a.id === s.id)).length;
+            const isCatChecked = catActiveCount > 0 && catActiveCount === catStrats.length;
+
+            const catDiv = document.createElement('div');
+            catDiv.className = 'category';
+            const header = document.createElement('div');
+            header.className = 'category-header crt-text';
+            header.innerHTML = `<span>${t(catId)}</span><input type="checkbox" class="cat-checkbox" data-cat="${catId}" ${isCatChecked ? 'checked' : ''}>`;
+            catDiv.appendChild(header);
+
+            const grid = document.createElement('div');
+            grid.className = 'stratagem-grid';
+
+            catStrats.forEach(s => {
+                const item = document.createElement('div');
+                const isActive = currentPool.some(a => a.id === s.id);
+                item.className = isActive ? 'stratagem-item active' : 'stratagem-item';
+                item.dataset.id = s.id;
+                
+                const img = document.createElement('img');
+                img.src = s.img;
+                img.onerror = () => img.style.opacity = '0';
+                item.appendChild(img);
+                
+                // Надежное переключение (не зависит от поиска)
+                item.onclick = () => {
+                    const isNowActive = item.classList.toggle('active');
+                    const pool = getActivePool();
+                    if (isNowActive) {
+                        if (!pool.some(a => a.id === s.id)) pool.push(s);
+                    } else {
+                        const index = pool.findIndex(a => a.id === s.id);
+                        if (index > -1) pool.splice(index, 1);
+                    }
+                    updateActivePoolUI();
+                };
+                
+                item.onmouseenter = () => {
+                    if (selectedMode === 'practice') {
+                        const activeImg = document.getElementById('active-img');
+                        activeImg.src = s.img;
+                        activeImg.style.opacity = '1';
+                        document.getElementById('active-name').textContent = currentLang === 'ru' ? s.name_ru : s.name_en;
+                        
+                        const container = document.getElementById('arrows-container');
+                        container.innerHTML = '';
+                        s.seq.forEach((dir) => {
+                            const span = document.createElement('span');
+                            span.textContent = arrowSymbols[dir];
+                            span.className = 'arrow';
+                            container.appendChild(span);
+                        });
+                    }
+                };
+                
+                item.onmouseleave = () => {
+                    if (selectedMode === 'practice') {
+                        if (currentStratagem) {
+                            updateActiveUI();
+                        } else {
+                            document.getElementById('active-img').style.opacity = '0';
+                            document.getElementById('active-name').textContent = t('loading');
+                            document.getElementById('arrows-container').innerHTML = '';
+                        }
+                    }
+                };
+
+                grid.appendChild(item);
+            });
+
+            catDiv.appendChild(grid);
+            container.appendChild(catDiv);
+        });
+
+        // Обработчики категорий
+        document.querySelectorAll('.cat-checkbox').forEach(cb => {
+            cb.onchange = (e) => {
+                const catId = e.target.dataset.cat;
+                const pool = getActivePool();
+                const checked = e.target.checked;
+                
+                db.filter(s => s.cat === catId).forEach(s => {
+                    const index = pool.findIndex(a => a.id === s.id);
+                    if (checked && index === -1) pool.push(s);
+                    else if (!checked && index > -1) pool.splice(index, 1);
+                });
+                
+                document.querySelectorAll('.stratagem-item').forEach(item => {
+                    if (db.find(s => s.id === item.dataset.id).cat === catId) {
+                        checked ? item.classList.add('active') : item.classList.remove('active');
+                    }
+                });
+                updateActivePoolUI();
+            };
+        });
+    }
+
+    document.getElementById('select-all').onchange = (e) => {
+        const checked = e.target.checked;
+        if (selectedMode === 'game') {
+            activePoolGame = checked ? [...db] : [];
+        } else {
+            activePoolPractice = checked ? [...db] : [];
+        }
+        
+        document.querySelectorAll('.stratagem-item').forEach(item => checked ? item.classList.add('active') : item.classList.remove('active'));
+        document.querySelectorAll('.cat-checkbox').forEach(cb => cb.checked = checked);
+        updateActivePoolUI();
+    };
+    document.getElementById('search-input').oninput = renderSidebar;
+
+    function updateActivePoolUI() {
+        const currentPool = getActivePool();
+        document.getElementById('select-all').checked = (currentPool.length === db.length);
+        
+        document.querySelectorAll('.cat-checkbox').forEach(cb => {
+            const catId = cb.dataset.cat;
+            const catStrats = db.filter(s => s.cat === catId);
+            const catActiveCount = catStrats.filter(s => currentPool.some(a => a.id === s.id)).length;
+            cb.checked = (catActiveCount > 0 && catActiveCount === catStrats.length);
+        });
+
+        if (state === 'practice') {
+            practiceIndex = 0;
+            if (currentPool.length > 0) loadPracticeStratagem();
+            else {
+                currentStratagem = null;
+                document.getElementById('active-img').style.opacity = '0';
+                document.getElementById('active-name').textContent = t('alertSelect');
+                document.getElementById('arrows-container').innerHTML = '';
+            }
+        }
+    }
+
+    function setMode(mode) {
+        if (selectedMode === mode) return; 
+        selectedMode = mode;
+        document.getElementById('btn-mode-game').classList.toggle('active', mode === 'game');
+        document.getElementById('btn-mode-practice').classList.toggle('active', mode === 'practice');
+        
+        // Исправление бага смены вкладок: сразу переключаем видимость панелей
+        document.getElementById('stats-panel').style.display = mode === 'game' ? 'flex' : 'none';
+        document.getElementById('practice-controls').style.display = mode === 'practice' ? 'block' : 'none';
+        document.getElementById('upcoming-container').style.display = 'none';
+        
+        // Рендерим меню под конкретный режим (с его пулом)
+        renderSidebar();
+        document.getElementById('select-all').checked = (getActivePool().length === db.length);
+
+        if (mode === 'practice') {
+            startPractice();
+        } else {
+            if (state !== 'playing') {
+                showOverlay(t('awaitingInput'), t('pressAnyKey'));
+                document.getElementById('active-img').style.opacity = '0';
+                document.getElementById('active-name').textContent = t('loading');
+                document.getElementById('arrows-container').innerHTML = '';
+            }
+        }
+    }
+
+    function showOverlay(title, desc) {
+        if (selectedMode !== 'game') return; 
+        document.getElementById('overlay').classList.remove('hidden');
+        document.getElementById('upcoming-container').style.display = 'none';
+        document.getElementById('overlay-title').textContent = title;
+        document.getElementById('overlay-desc').textContent = desc;
+        state = 'menu';
+        cancelAnimationFrame(timerId);
+        
+        document.getElementById('timer-fill').style.width = '100%';
+        document.getElementById('timer-fill').style.backgroundColor = '#222';
+        const timerText = document.getElementById('timer-text');
+        timerText.textContent = t('selectMode');
+        timerText.style.color = '#fff';
+    }
+
+    // --- ОЧЕРЕДЬ СТРАТАГЕМ ---
+    function renderUpcomingQueue() {
+        const container = document.getElementById('upcoming-container');
+        container.innerHTML = '';
+        if (selectedMode !== 'game' || state !== 'playing') {
+            container.style.display = 'none';
+            return;
+        }
+        container.style.display = 'flex';
+        
+        upcomingQueue.forEach(s => {
+            const div = document.createElement('div');
+            div.className = 'upcoming-item';
+            const img = document.createElement('img');
+            img.src = s.img;
+            div.appendChild(img);
+            container.appendChild(div);
+        });
+    }
+
+    function startGame() {
+        const pool = getActivePool();
+        if (pool.length === 0) return alert(t('alertSelect'));
+        state = 'playing';
+        score = 0; round = 1; stratagemsInRound = 0; 
+        MAX_TIME = timerSpeed * 1000;
+        timeLeft = MAX_TIME; inputLocked = false;
+        
+        upcomingQueue = [];
+        for (let i = 0; i < UPCOMING_COUNT; i++) {
+            upcomingQueue.push(pool[Math.floor(Math.random() * pool.length)]);
+        }
+        
+        document.getElementById('stats-panel').style.display = 'flex';
+        document.getElementById('practice-controls').style.display = 'none';
+        document.getElementById('ui-score').textContent = score;
+        document.getElementById('ui-round').textContent = round;
+        document.getElementById('overlay').classList.add('hidden');
+        document.getElementById('timer-text').textContent = '';
+        
+        nextRandomStratagem();
+        lastTime = performance.now();
+        timerId = requestAnimationFrame(gameLoop);
+    }
+
+    function gameLoop(timestamp) {
+        if (state !== 'playing') return;
+        const dt = timestamp - lastTime; lastTime = timestamp;
+        timeLeft -= dt * (1 + (round * 0.1)); 
+
+        const pct = Math.max(0, (timeLeft / MAX_TIME) * 100);
+        const timerFill = document.getElementById('timer-fill');
+        const timerText = document.getElementById('timer-text');
+        
+        timerFill.style.width = `${pct}%`;
+
+        if (pct < 30) {
+            timerFill.style.backgroundColor = '#ff0000';
+            timerText.textContent = t('timeOut');
+            timerText.style.color = '#fff';
+        } else {
+            timerFill.style.backgroundColor = '#ffe800';
+            timerText.textContent = '';
+        }
+
+        if (timeLeft <= 0) endGame();
+        else timerId = requestAnimationFrame(gameLoop);
+    }
+
+    function endGame() {
+        if (score > record) {
+            record = score;
+            localStorage.setItem('stratagem_record', record);
+            document.getElementById('ui-record').textContent = record;
+        }
+        document.getElementById('upcoming-container').style.display = 'none';
+        document.getElementById('timer-text').textContent = t('traitor');
+        document.getElementById('timer-text').style.color = '#000';
+        document.getElementById('timer-fill').style.width = '100%';
+        document.getElementById('timer-fill').style.backgroundColor = '#ffe800';
+        showOverlay(t('gameOver'), t('restart').replace('{s}', score));
+        state = 'gameover';
+    }
+
+    function startPractice() {
+        const pool = getActivePool();
+        if (pool.length === 0) {
+            currentStratagem = null;
+            document.getElementById('active-img').style.opacity = '0';
+            document.getElementById('active-name').textContent = t('alertSelect');
+            document.getElementById('arrows-container').innerHTML = '';
+        }
+        
+        state = 'practice';
+        practiceIndex = 0; inputLocked = false;
+        
+        document.getElementById('stats-panel').style.display = 'none';
+        document.getElementById('practice-controls').style.display = 'block';
+        document.getElementById('upcoming-container').style.display = 'none';
+        document.getElementById('overlay').classList.add('hidden');
+        
+        document.getElementById('timer-fill').style.width = '100%';
+        document.getElementById('timer-fill').style.backgroundColor = '#2a2c31';
+        const timerText = document.getElementById('timer-text');
+        timerText.textContent = t('practiceActive');
+        timerText.style.color = '#888';
+
+        cancelAnimationFrame(timerId);
+        if (pool.length > 0) loadPracticeStratagem();
+    }
+
+    function loadPracticeStratagem() {
+        const pool = getActivePool();
+        if (pool.length === 0) return;
+        currentStratagem = pool[practiceIndex];
+        currentIndex = 0;
+        updateActiveUI();
+    }
+
+    function nextRandomStratagem() {
+        const pool = getActivePool();
+        
+        if (selectedMode === 'game') {
+            currentStratagem = upcomingQueue.shift();
+            upcomingQueue.push(pool[Math.floor(Math.random() * pool.length)]);
+            renderUpcomingQueue();
+        } else {
+            currentStratagem = pool[Math.floor(Math.random() * pool.length)];
+        }
+        
+        currentIndex = 0;
+        updateActiveUI();
+    }
+
+    function updateActiveUI() {
+        if (!currentStratagem) return;
+        const img = document.getElementById('active-img');
+        img.src = currentStratagem.img;
+        img.style.opacity = '1';
+        document.getElementById('active-name').textContent = currentLang === 'ru' ? currentStratagem.name_ru : currentStratagem.name_en;
+        renderArrows();
+    }
+
+    function renderArrows(isError = false) {
+        const container = document.getElementById('arrows-container');
+        container.innerHTML = '';
+        currentStratagem.seq.forEach((dir, i) => {
+            const span = document.createElement('span');
+            span.textContent = arrowSymbols[dir];
+            span.className = 'arrow';
+            if (isError) span.classList.add('error-state');
+            else if (i < currentIndex) span.classList.add('completed');
+            else if (i === currentIndex) span.classList.add('active');
+            container.appendChild(span);
+        });
+    }
+
+    // --- УНИВЕРСАЛЬНАЯ ОБРАБОТКА ВВОДА ---
+    function processDirection(dir) {
+        if (inputLocked) return;
+
+        if (state === 'menu' || state === 'gameover') {
+            if (selectedMode === 'game') startGame();
+            return;
+        }
+
+        if (state !== 'playing' && state !== 'practice') return;
+        if (!currentStratagem) return; // Защита для пустой тренировки
+
+        if (dir === currentStratagem.seq[currentIndex]) {
+            currentIndex++;
+            
+            if (currentIndex === currentStratagem.seq.length) {
+                if (state === 'playing') {
+                    score += currentStratagem.seq.length * 10;
+                    document.getElementById('ui-score').textContent = score;
+                    timeLeft = Math.min(MAX_TIME, timeLeft + 1500); 
+                    
+                    stratagemsInRound++;
+                    if (stratagemsInRound >= 5) {
+                        round++;
+                        stratagemsInRound = 0;
+                        document.getElementById('ui-round').textContent = round;
+                        timeLeft = Math.min(MAX_TIME, timeLeft + 2000); 
+                    }
+                    nextRandomStratagem(); 
+                } else if (state === 'practice') {
+                    const pool = getActivePool();
+                    practiceIndex = (practiceIndex + 1) % pool.length;
+                    loadPracticeStratagem();
+                }
+            } else {
+                renderArrows();
+            }
+        } else {
+            currentIndex = 0;
+            renderArrows(true);
+            document.getElementById('game-area').classList.add('shake');
+            
+            if (state === 'playing') timeLeft -= 500; 
+            
+            inputLocked = true;
+            setTimeout(() => {
+                document.getElementById('game-area').classList.remove('shake');
+                if (state === 'playing' || state === 'practice') renderArrows();
+                inputLocked = false;
+            }, 300);
+        }
+    }
+
+    function processAction(action) {
+        if (action === 'start') {
+            if (state === 'menu' || state === 'gameover') {
+                if (selectedMode === 'game') startGame();
+            }
+        } else if (action === 'prev') {
+            if (state === 'practice' && getActivePool().length > 0) {
+                const pool = getActivePool();
+                practiceIndex = (practiceIndex - 1 + pool.length) % pool.length;
+                loadPracticeStratagem();
+            }
+        } else if (action === 'next') {
+            if (state === 'practice' && getActivePool().length > 0) {
+                const pool = getActivePool();
+                practiceIndex = (practiceIndex + 1) % pool.length;
+                loadPracticeStratagem();
+            }
+        }
+    }
+
+    const keyToDir = { 
+        'w': 'up', 'ц': 'up', 'arrowup': 'up',
+        's': 'down', 'ы': 'down', 'arrowdown': 'down',
+        'a': 'left', 'ф': 'left', 'arrowleft': 'left',
+        'd': 'right', 'в': 'right', 'arrowright': 'right'
+    };
+    const practiceKeys = { 'q': -1, 'й': -1, 'e': 1, 'у': 1 };
+
+    document.addEventListener('keydown', (e) => {
+        if (recordingKey) {
+            e.preventDefault();
+            if (e.code === 'Escape') {
+                document.getElementById('btn-key-' + recordingKey).classList.remove('recording');
+                recordingKey = null;
+                updateCustomKeysUI();
+                return;
+            }
+            customKeys[recordingKey] = e.code;
+            localStorage.setItem('stratagem_custom_keys', JSON.stringify(customKeys));
+            document.getElementById('btn-key-' + recordingKey).classList.remove('recording');
+            recordingKey = null;
+            updateCustomKeysUI();
+            return;
+        }
+
+        if (document.activeElement && ['INPUT', 'SELECT'].includes(document.activeElement.tagName)) {
+            if (e.key === 'Escape') document.activeElement.blur(); 
+            return;
+        }
+
+        if (state === 'settings') {
+            if (e.key === 'Escape') closeSettings();
+            return; 
+        }
+        
+        const key = e.key.toLowerCase();
+
+        if (key === '1') return setMode('game');
+        if (key === '2') return setMode('practice');
+        if (key === 'escape') {
+            if (selectedMode === 'game') return showOverlay(t('awaitingInput'), t('pressAnyKey'));
+            return;
+        }
+
+        let dir = null;
+        if (currentInputMode === 'custom') {
+            if (e.code === customKeys.up) dir = 'up';
+            else if (e.code === customKeys.down) dir = 'down';
+            else if (e.code === customKeys.left) dir = 'left';
+            else if (e.code === customKeys.right) dir = 'right';
+        } else {
+            dir = keyToDir[key];
+            if (dir) {
+                const isWASD = ['w','a','s','d','ц','ф','ы','в'].includes(key);
+                const isArrows = ['arrowup','arrowdown','arrowleft','arrowright'].includes(key);
+                
+                if (currentInputMode === 'wasd' && !isWASD) dir = null;
+                if (currentInputMode === 'arrows' && !isArrows) dir = null;
+            }
+        }
+
+        if (dir) {
+            e.preventDefault(); 
+            processDirection(dir);
+        } else if (key === ' ') {
+            e.preventDefault();
+            processAction('start');
+        } else if (state === 'practice' && practiceKeys[key]) {
+            e.preventDefault();
+            practiceKeys[key] > 0 ? processAction('next') : processAction('prev');
+        }
+    });
+
+    let previousGamepadState = { up: false, down: false, left: false, right: false, start: false, lb: false, rb: false };
+    
+    function pollGamepad() {
+        const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+        for (let i = 0; i < gamepads.length; i++) {
+            const gp = gamepads[i];
+            if (gp) {
+                const axes = gp.axes;
+                const buttons = gp.buttons;
+                const deadzone = 0.5;
+
+                const up = (buttons[12] && buttons[12].pressed) || (axes[1] < -deadzone);
+                const down = (buttons[13] && buttons[13].pressed) || (axes[1] > deadzone);
+                const left = (buttons[14] && buttons[14].pressed) || (axes[0] < -deadzone);
+                const right = (buttons[15] && buttons[15].pressed) || (axes[0] > deadzone);
+                
+                const start = (buttons[0] && buttons[0].pressed) || (buttons[9] && buttons[9].pressed);
+                const lb = buttons[4] && buttons[4].pressed;
+                const rb = buttons[5] && buttons[5].pressed;
+
+                if (up && !previousGamepadState.up) processDirection('up');
+                if (down && !previousGamepadState.down) processDirection('down');
+                if (left && !previousGamepadState.left) processDirection('left');
+                if (right && !previousGamepadState.right) processDirection('right');
+                
+                if (start && !previousGamepadState.start) processAction('start');
+                if (lb && !previousGamepadState.lb) processAction('prev');
+                if (rb && !previousGamepadState.rb) processAction('next');
+
+                previousGamepadState = { up, down, left, right, start, lb, rb };
+                break; 
+            }
+        }
+        requestAnimationFrame(pollGamepad);
+    }
+    
+    requestAnimationFrame(pollGamepad);
+    updateLanguageUI();
+</script>
+</body>
+</html>
