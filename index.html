@@ -108,11 +108,6 @@
         .record-label { font-size: 16px; color: #888; margin-top: 5px; user-select: none; }
         .record-label span { color: #ffe800; }
 
-        #practice-controls {
-            display: none; text-align: center; margin-bottom: 40px; color: #aaa; font-size: 20px;
-        }
-        .controls-hint { color: #fff; background: #333; padding: 2px 8px; border-radius: 4px; border: 1px solid #555; }
-
         #upcoming-container {
             display: none; flex-direction: row; gap: 10px; margin-bottom: 15px; height: 50px;
         }
@@ -240,11 +235,6 @@
                 </div>
             </div>
 
-            <div id="practice-controls">
-                <div id="practice-controls-hint"></div>
-            </div>
-
-            <!-- Блок следующих стратагем -->
             <div id="upcoming-container"></div>
 
             <div id="timer-bar-container">
@@ -265,7 +255,6 @@
             </div>
         </div>
         
-        <!-- МОДАЛЬНОЕ ОКНО НАСТРОЕК -->
         <div id="settings-modal" class="hidden">
             <div class="settings-box">
                 <h2 id="settings-title">НАСТРОЙКИ</h2>
@@ -316,8 +305,6 @@
             pageTitle: "Stratagem Trainer Helldivers 2",
             selectAll: "ВЫБРАТЬ ВСЕ", search: "Поиск стратагем...", gameMode: "ИГРА", practiceMode: "ТРЕНИРОВКА",
             settings: "НАСТРОЙКИ ⚙", round: "Раунд", score: "Счет", record: "Рекорд : ",
-            practiceHint: "<span class='controls-hint'>[Q]</span> Пред. &nbsp;&nbsp;|&nbsp;&nbsp; <span class='controls-hint'>[E]</span> След.",
-            practiceHintGamepad: "<span class='controls-hint'>[Q] / [L1]</span> Пред. &nbsp;&nbsp;|&nbsp;&nbsp; <span class='controls-hint'>[E] / [R2]</span> След.",
             selectMode: "ВЫБЕРИТЕ РЕЖИМ", loading: "выбери стратаген слева", awaitingInput: "ОЖИДАНИЕ ВВОДА",
             pressAnyKey: "Нажмите любую клавишу перемещения", pressEsc: "Нажмите [ESC] чтобы прервать сессию",
             timeOut: "ВРЕМЯ ИСТЕКАЕТ!", traitor: "ОБНАРУЖЕН ПРЕДАТЕЛЬ !", gameOver: "ИГРА ОКОНЧЕНА",
@@ -329,7 +316,6 @@
             cat1: "ПАТРИОТИЧЕСКИЙ ЦЕНТР АДМИНИСТРИРОВАНИЯ", cat2: "ОРБИТАЛЬНЫЕ ПУШКИ", cat3: "АНГАР", cat4: "МОСТИК",
             cat5: "ИНЖЕНЕРНЫЙ ОТСЕК", cat6: "РОБОТОТЕХНИЧЕСКИЙ ЦЕХ", cat7: "ЗАДАНИЯ / ОБЩИЕ",
             
-            // Новые категории из скриншотов
             cat_chem: "ХИМЗАЩИТА", cat_urban: "ГОРОДСКИЕ ЛЕГЕНДЫ", cat_servants: "СЛУГИ СВОБОДЫ",
             cat_frontier: "ПОГРАНИЧНОЕ ПРАВОСУДИЕ", cat_ceremony: "ЦЕРЕМОНИЙМЕЙСТЕР", cat_law: "СИЛА ЗАКОНА",
             cat_control: "КОНТРОЛЬНАЯ ГРУППА", cat_dust: "ПЫЛЕВЫЕ ВИХРИ", cat_pythons: "КОММАНДОС «ПИТОНЫ»",
@@ -340,8 +326,6 @@
             pageTitle: "Stratagem Trainer Helldivers 2",
             selectAll: "SELECT ALL", search: "Search stratagems...", gameMode: "PLAY", practiceMode: "PRACTICE",
             settings: "SETTINGS ⚙", round: "Round", score: "Score", record: "Record : ",
-            practiceHint: "<span class='controls-hint'>[Q]</span> Prev. &nbsp;&nbsp;|&nbsp;&nbsp; <span class='controls-hint'>[E]</span> Next.",
-            practiceHintGamepad: "<span class='controls-hint'>[Q] / [L1]</span> Prev. &nbsp;&nbsp;|&nbsp;&nbsp; <span class='controls-hint'>[E] / [R2]</span> Next.",
             selectMode: "SELECT MODE", loading: "Select a stratagem on the left", awaitingInput: "AWAITING INPUT",
             pressAnyKey: "Press any movement key", pressEsc: "Press [ESC] to abort session",
             timeOut: "TIME IS RUNNING OUT!", traitor: "TRAITOR DETECTED !", gameOver: "GAME OVER",
@@ -353,7 +337,6 @@
             cat1: "PATRIOTIC ADMINISTRATION CENTER", cat2: "ORBITAL CANNONS", cat3: "HANGAR", cat4: "BRIDGE",
             cat5: "ENGINEERING BAY", cat6: "ROBOTICS WORKSHOP", cat7: "MISSIONS / GENERAL",
             
-            // Новые категории из скриншотов
             cat_chem: "CHEMICAL AGENTS", cat_urban: "URBAN LEGENDS", cat_servants: "SERVANTS OF FREEDOM",
             cat_frontier: "FRONTIER JUSTICE", cat_ceremony: "MASTER OF CEREMONIES", cat_law: "FORCE OF LAW",
             cat_control: "CONTROL GROUP", cat_dust: "DUST DEVILS", cat_pythons: "PYTHON COMMANDOS",
@@ -364,15 +347,15 @@
 
     const db = [
         { id: 'mg_43_machine_gun', name_ru: 'MG-43 Пулемет', name_en: 'MG-43 Machine Gun', cat: 'cat1', seq: ['down', 'left', 'down', 'up', 'right'], img: 'img/mg_43_machine_gun.svg' },
-        { id: 'apw_1_anti_materiel_rifle', name_ru: 'Крупнокалиберная винтовка APW-1', name_en: 'APW-1 Anti-Materiel Rifle', cat: 'cat1', seq: ['down', 'left', 'right', 'up', 'down'], img: 'img/apw_1_anti_materiel_rifle.svg' },
+        { id: 'apw_1_anti_materiel_rifle', name_ru: 'APW-1 Крупнокалиберная винтовка', name_en: 'APW-1 Anti-Materiel Rifle', cat: 'cat1', seq: ['down', 'left', 'right', 'up', 'down'], img: 'img/apw_1_anti_materiel_rifle.svg' },
         { id: 'm_105_stalwart', name_ru: 'M-105 Оплот', name_en: 'M-105 Stalwart', cat: 'cat1', seq: ['down', 'left', 'down', 'up', 'up', 'left'], img: 'img/m_105_stalwart.svg' },
-        { id: 'eat_17_expendable_anti_tank', name_ru: 'Одноразовый гранатомет EAT-17', name_en: 'EAT-17 Expendable Anti-Tank', cat: 'cat1', seq: ['down', 'down', 'left', 'up', 'right'], img: 'img/eat_17_expendable_anti_tank.svg' },
-        { id: 'gr_8_recoilless_rifle', name_ru: 'Безоткатная винтовка GR-8', name_en: 'GR-8 Recoilless Rifle', cat: 'cat1', seq: ['down', 'left', 'right', 'right', 'left'], img: 'img/gr_8_recoilless_rifle.svg' },
-        { id: 'flam_40_flamethrower', name_ru: 'Огнемет FLAM-40', name_en: 'FLAM-40 Flamethrower', cat: 'cat1', seq: ['down', 'left', 'up', 'down', 'up'], img: 'img/flam_40_flamethrower.svg' },
-        { id: 'ac_8_autocannon', name_ru: 'Автопушка AC-8', name_en: 'AC-8 Autocannon', cat: 'cat1', seq: ['down', 'left', 'down', 'up', 'up', 'right'], img: 'img/ac_8_autocannon.svg' },
-        { id: 'mg_206_heavy_machine_gun', name_ru: 'Тяжелый пулемет MG-206', name_en: 'MG-206 Heavy Machine Gun', cat: 'cat1', seq: ['down', 'left', 'up', 'down', 'down'], img: 'img/mg_206_heavy_machine_gun.svg' },
-        { id: 'rl_77_airburst_rocket_launcher', name_ru: 'Ракетница RL-77', name_en: 'RL-77 Airburst Rocket Launcher', cat: 'cat1', seq: ['down', 'up', 'up', 'left', 'right'], img: 'img/rl_77_airburst_rocket_launcher.svg' },
-        { id: 'mls_4x_commando', name_ru: 'Ракетница Коммандо MLS-4X', name_en: 'MLS-4X Commando', cat: 'cat1', seq: ['down', 'left', 'up', 'down', 'right'], img: 'img/mls_4x_commando.svg' },
+        { id: 'eat_17_expendable_anti_tank', name_ru: 'EAT-17 Одноразовый гранатомет', name_en: 'EAT-17 Expendable Anti-Tank', cat: 'cat1', seq: ['down', 'down', 'left', 'up', 'right'], img: 'img/eat_17_expendable_anti_tank.svg' },
+        { id: 'gr_8_recoilless_rifle', name_ru: 'GR-8 Безоткатная винтовка', name_en: 'GR-8 Recoilless Rifle', cat: 'cat1', seq: ['down', 'left', 'right', 'right', 'left'], img: 'img/gr_8_recoilless_rifle.svg' },
+        { id: 'flam_40_flamethrower', name_ru: 'FLAM-40 Огнемет', name_en: 'FLAM-40 Flamethrower', cat: 'cat1', seq: ['down', 'left', 'up', 'down', 'up'], img: 'img/flam_40_flamethrower.svg' },
+        { id: 'ac_8_autocannon', name_ru: 'AC-8 Автопушка', name_en: 'AC-8 Autocannon', cat: 'cat1', seq: ['down', 'left', 'down', 'up', 'up', 'right'], img: 'img/ac_8_autocannon.svg' },
+        { id: 'mg_206_heavy_machine_gun', name_ru: 'MG-206 Тяжелый пулемет', name_en: 'MG-206 Heavy Machine Gun', cat: 'cat1', seq: ['down', 'left', 'up', 'down', 'down'], img: 'img/mg_206_heavy_machine_gun.svg' },
+        { id: 'rl_77_airburst_rocket_launcher', name_ru: 'RL-77 Ракетница', name_en: 'RL-77 Airburst Rocket Launcher', cat: 'cat1', seq: ['down', 'up', 'up', 'left', 'right'], img: 'img/rl_77_airburst_rocket_launcher.svg' },
+        { id: 'mls_4x_commando', name_ru: 'MLS-4X Коммандо', name_en: 'MLS-4X Commando', cat: 'cat1', seq: ['down', 'left', 'up', 'down', 'right'], img: 'img/mls_4x_commando.svg' },
         
         { id: 'orbital_gatling_barrage', name_ru: 'Орбитальный залп из гатлинга', name_en: 'Orbital Gatling Barrage', cat: 'cat2', seq: ['right', 'down', 'left', 'up', 'up'], img: 'img/orbital_gatling_barrage.svg' },
         { id: 'orbital_airburst_strike', name_ru: 'Орбитальный воздушный разрыв', name_en: 'Orbital Airburst Strike', cat: 'cat2', seq: ['right', 'right', 'right'], img: 'img/orbital_airburst_strike.svg' },
@@ -387,7 +370,7 @@
         { id: 'eagle_airstrike', name_ru: 'Орел: Авиаудар', name_en: 'Eagle Airstrike', cat: 'cat3', seq: ['up', 'right', 'down', 'right'], img: 'img/eagle_airstrike.svg' },
         { id: 'eagle_cluster_bomb', name_ru: 'Орел: Кассетная бомба', name_en: 'Eagle Cluster Bomb', cat: 'cat3', seq: ['up', 'right', 'down', 'down', 'right'], img: 'img/eagle_cluster_bomb.svg' },
         { id: 'eagle_napalm_airstrike', name_ru: 'Орел: Напалмовый авиаудар', name_en: 'Eagle Napalm Airstrike', cat: 'cat3', seq: ['up', 'right', 'down', 'up'], img: 'img/eagle_napalm_airstrike.svg' },
-        { id: 'lift_850_jump_pack', name_ru: 'Рюкзак прыжкового двигателя', name_en: 'LIFT-850 Jump Pack', cat: 'cat3', seq: ['down', 'up', 'up', 'down', 'up'], img: 'img/lift_850_jump_pack.svg' },
+        { id: 'lift_850_jump_pack', name_ru: 'LIFT-850 Прыжковый ранец', name_en: 'LIFT-850 Jump Pack', cat: 'cat3', seq: ['down', 'up', 'up', 'down', 'up'], img: 'img/lift_850_jump_pack.svg' },
         { id: 'eagle_smoke_strike', name_ru: 'Орел: Дымовой удар', name_en: 'Eagle Smoke Strike', cat: 'cat3', seq: ['up', 'right', 'up', 'down'], img: 'img/eagle_smoke_strike.svg' },
         { id: 'eagle_110mm_rocket_pods', name_ru: 'Орел: 110-мм ракеты', name_en: 'Eagle 110mm Rocket Pods', cat: 'cat3', seq: ['up', 'right', 'up', 'left'], img: 'img/eagle_110mm_rocket_pods.svg' },
         { id: 'eagle_500kg_bomb', name_ru: 'Орел: Бомба 500кг', name_en: 'Eagle 500kg Bomb', cat: 'cat3', seq: ['up', 'right', 'down', 'down', 'down'], img: 'img/eagle_500kg_bomb.svg' },
@@ -396,96 +379,80 @@
         { id: 'orbital_gas_strike', name_ru: 'Орбитальный газовый удар', name_en: 'Orbital Gas Strike', cat: 'cat4', seq: ['right', 'right', 'down', 'right'], img: 'img/orbital_gas_strike.svg' },
         { id: 'orbital_ems_strike', name_ru: 'Орбитальный ЭМИ-удар', name_en: 'Orbital EMS Strike', cat: 'cat4', seq: ['right', 'right', 'left', 'down'], img: 'img/orbital_ems_strike.svg' },
         { id: 'orbital_smoke_strike', name_ru: 'Орбитальный дымовой удар', name_en: 'Orbital Smoke Strike', cat: 'cat4', seq: ['right', 'right', 'down', 'up'], img: 'img/orbital_smoke_strike.svg' },
-        { id: 'e_mg_101_hmg_emplacement', name_ru: 'Установка тяжелого пулемета', name_en: 'E-MG-101 HMG Emplacement', cat: 'cat4', seq: ['down', 'up', 'left', 'right', 'right', 'left'], img: 'img/e_mg_101_hmg_emplacement.svg' },
-        { id: 'fx_12_shield_generator_relay', name_ru: 'Генератор щита FX-12', name_en: 'FX-12 Shield Generator Relay', cat: 'cat4', seq: ['down', 'down', 'left', 'right', 'left', 'right'], img: 'img/fx_12_shield_generator_relay.svg' },
-        { id: 'a_arc_3_tesla_tower', name_ru: 'Башня Теслы A/ARC-3', name_en: 'A/ARC-3 Tesla Tower', cat: 'cat4', seq: ['down', 'up', 'right', 'up', 'left', 'right'], img: 'img/a_arc_3_tesla_tower.svg' },
+        { id: 'e_mg_101_hmg_emplacement', name_ru: 'E-MG-101 Установка тяжелого пулемета', name_en: 'E-MG-101 HMG Emplacement', cat: 'cat4', seq: ['down', 'up', 'left', 'right', 'right', 'left'], img: 'img/e_mg_101_hmg_emplacement.svg' },
+        { id: 'fx_12_shield_generator_relay', name_ru: 'FX-12 Генератор щита', name_en: 'FX-12 Shield Generator Relay', cat: 'cat4', seq: ['down', 'down', 'left', 'right', 'left', 'right'], img: 'img/fx_12_shield_generator_relay.svg' },
+        { id: 'a_arc_3_tesla_tower', name_ru: 'A/ARC-3 Башня Теслы', name_en: 'A/ARC-3 Tesla Tower', cat: 'cat4', seq: ['down', 'up', 'right', 'up', 'left', 'right'], img: 'img/a_arc_3_tesla_tower.svg' },
 
-        { id: 'md_6_anti_personnel_minefield', name_ru: 'Минное поле MD-6', name_en: 'MD-6 Anti-Personnel Minefield', cat: 'cat5', seq: ['down', 'left', 'up', 'right'], img: 'img/md_6_anti_personnel_minefield.svg' },
-        { id: 'b_1_supply_pack', name_ru: 'Рюкзак снабжения B-1', name_en: 'B-1 Supply Pack', cat: 'cat5', seq: ['down', 'left', 'down', 'up', 'up', 'down'], img: 'img/b_1_supply_pack.svg' },
-        { id: 'gl_21_grenade_launcher', name_ru: 'Гранатомет GL-21', name_en: 'GL-21 Grenade Launcher', cat: 'cat5', seq: ['down', 'left', 'up', 'left', 'down'], img: 'img/gl_21_grenade_launcher.svg' },
-        { id: 'las_98_laser_cannon', name_ru: 'Лазерная пушка LAS-98', name_en: 'LAS-98 Laser Cannon', cat: 'cat5', seq: ['down', 'left', 'down', 'up', 'left'], img: 'img/las_98_laser_cannon.svg' },
-        { id: 'md_i4_incendiary_mines', name_ru: 'Зажигательные мины MD-14', name_en: 'MD-14 Incendiary Mines', cat: 'cat5', seq: ['down', 'left', 'left', 'down'], img: 'img/md_i4_incendiary_mines.svg' },
-        { id: 'ax_las_5_rover', name_ru: 'Дрон «Гвардеец» (Лазер)', name_en: 'AX/LAS-5 "Guard Dog" Rover', cat: 'cat5', seq: ['down', 'up', 'left', 'up', 'right', 'right'], img: 'img/ax_las_5_rover.svg' },
-        { id: 'sh_20_ballistic_shield_backpack', name_ru: 'Баллистический щит SH-20', name_en: 'SH-20 Ballistic Shield Backpack', cat: 'cat5', seq: ['down', 'left', 'down', 'down', 'up', 'left'], img: 'img/sh_20_ballistic_shield_backpack.svg' },
-        { id: 'arc_3_arc_thrower', name_ru: 'Дуговой излучатель ARC-3', name_en: 'ARC-3 Arc Thrower', cat: 'cat5', seq: ['down', 'right', 'down', 'up', 'left', 'left'], img: 'img/arc_3_arc_thrower.svg' },
-        { id: 'las_99_quasar_cannon', name_ru: 'Квазар-пушка LAS-99', name_en: 'LAS-99 Quasar Cannon', cat: 'cat5', seq: ['down', 'down', 'up', 'left', 'right'], img: 'img/las_99_quasar_cannon.svg' },
-        { id: 'sh_32_shield_generator_pack', name_ru: 'Генератор щита SH-32', name_en: 'SH-32 Shield Generator Pack', cat: 'cat5', seq: ['down', 'up', 'left', 'right', 'left', 'right'], img: 'img/sh_32_shield_generator_pack.svg' },
-        { id: 'md_17_anti_tank_mines', name_ru: 'Противотанковые мины MD-17', name_en: 'MD-17 Anti-Tank Mines', cat: 'cat5', seq: ['down', 'left', 'up', 'up'], img: 'img/md_17_anti_tank_mines.svg' },
-        { id: 'ax_ar_23_guard_dog', name_ru: 'Дрон «Гвардеец» (Винтовка)', name_en: 'AX/AR-23 "Guard Dog"', cat: 'cat5', seq: ['down', 'up', 'left', 'up', 'right', 'down'], img: 'img/ax_ar_23_guard_dog.svg' },
+        { id: 'md_6_anti_personnel_minefield', name_ru: 'MD-6 Минное поле', name_en: 'MD-6 Anti-Personnel Minefield', cat: 'cat5', seq: ['down', 'left', 'up', 'right'], img: 'img/md_6_anti_personnel_minefield.svg' },
+        { id: 'b_1_supply_pack', name_ru: 'B-1 Рюкзак снабжения', name_en: 'B-1 Supply Pack', cat: 'cat5', seq: ['down', 'left', 'down', 'up', 'up', 'down'], img: 'img/b_1_supply_pack.svg' },
+        { id: 'gl_21_grenade_launcher', name_ru: 'GL-21 Гранатомет', name_en: 'GL-21 Grenade Launcher', cat: 'cat5', seq: ['down', 'left', 'up', 'left', 'down'], img: 'img/gl_21_grenade_launcher.svg' },
+        { id: 'las_98_laser_cannon', name_ru: 'LAS-98 Лазерная пушка', name_en: 'LAS-98 Laser Cannon', cat: 'cat5', seq: ['down', 'left', 'down', 'up', 'left'], img: 'img/las_98_laser_cannon.svg' },
+        { id: 'md_i4_incendiary_mines', name_ru: 'MD-14 Зажигательные мины', name_en: 'MD-14 Incendiary Mines', cat: 'cat5', seq: ['down', 'left', 'left', 'down'], img: 'img/md_i4_incendiary_mines.svg' },
+        { id: 'ax_las_5_rover', name_ru: 'AX/LAS-5 Дрон «Гвардеец» (Лазер)', name_en: 'AX/LAS-5 "Guard Dog" Rover', cat: 'cat5', seq: ['down', 'up', 'left', 'up', 'right', 'right'], img: 'img/ax_las_5_rover.svg' },
+        { id: 'sh_20_ballistic_shield_backpack', name_ru: 'SH-20 Баллистический щит', name_en: 'SH-20 Ballistic Shield Backpack', cat: 'cat5', seq: ['down', 'left', 'down', 'down', 'up', 'left'], img: 'img/sh_20_ballistic_shield_backpack.svg' },
+        { id: 'arc_3_arc_thrower', name_ru: 'ARC-3 Дуговой излучатель', name_en: 'ARC-3 Arc Thrower', cat: 'cat5', seq: ['down', 'right', 'down', 'up', 'left', 'left'], img: 'img/arc_3_arc_thrower.svg' },
+        { id: 'las_99_quasar_cannon', name_ru: 'LAS-99 Квазар-пушка', name_en: 'LAS-99 Quasar Cannon', cat: 'cat5', seq: ['down', 'down', 'up', 'left', 'right'], img: 'img/las_99_quasar_cannon.svg' },
+        { id: 'sh_32_shield_generator_pack', name_ru: 'SH-32 Генератор щита', name_en: 'SH-32 Shield Generator Pack', cat: 'cat5', seq: ['down', 'up', 'left', 'right', 'left', 'right'], img: 'img/sh_32_shield_generator_pack.svg' },
+        { id: 'md_17_anti_tank_mines', name_ru: 'MD-17 Противотанковые мины', name_en: 'MD-17 Anti-Tank Mines', cat: 'cat5', seq: ['down', 'left', 'up', 'up'], img: 'img/md_17_anti_tank_mines.svg' },
+        { id: 'ax_ar_23_guard_dog', name_ru: 'AX/AR-23 Дрон «Гвардеец» (Винтовка)', name_en: 'AX/AR-23 "Guard Dog"', cat: 'cat5', seq: ['down', 'up', 'left', 'up', 'right', 'down'], img: 'img/ax_ar_23_guard_dog.svg' },
 
-        { id: 'a_mg_43_machine_gun_sentry', name_ru: 'Пулеметная турель', name_en: 'Machine Gun Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'right', 'up'], img: 'img/a_mg_43_machine_gun_sentry.svg' },
-        { id: 'a_g_16_gatling_sentry', name_ru: 'Турель «Гатлинг»', name_en: 'Gatling Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'left'], img: 'img/a_g_16_gatling_sentry.svg' },
-        { id: 'a_m_12_mortar_sentry', name_ru: 'Минометная турель', name_en: 'Mortar Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'right', 'down'], img: 'img/a_m_12_mortar_sentry.svg' },
-        { id: 'a_ac_8_autocannon_sentry', name_ru: 'Автопушечная турель', name_en: 'Autocannon Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'up', 'left', 'up'], img: 'img/a_ac_8_autocannon_sentry.svg' },
-        { id: 'a_mls_4x_rocket_sentry', name_ru: 'Ракетная турель', name_en: 'Rocket Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'right', 'left'], img: 'img/a_mls_4x_rocket_sentry.svg' },
-        { id: 'a_m_23_ems_mortar_sentry', name_ru: 'ЭМИ-минометная турель', name_en: 'EMS Mortar Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'down', 'right'], img: 'img/a_m_23_ems_mortar_sentry.svg' },
-        { id: 'exo_45_patriot_exosuit', name_ru: 'Экзокостюм «Патриот»', name_en: 'EXO-45 Patriot Exosuit', cat: 'cat6', seq: ['left', 'down', 'right', 'up', 'left', 'down', 'down'], img: 'img/exo_45_patriot_exosuit.svg' },
-        { id: 'exo_49_emancipator_exosuit', name_ru: 'Экзокостюм «Освободитель»', name_en: 'EXO-49 Emancipator Exosuit', cat: 'cat6', seq: ['left', 'down', 'right', 'up', 'left', 'down', 'up'], img: 'img/exo_49_emancipator_exosuit.svg' },
+        { id: 'a_mg_43_machine_gun_sentry', name_ru: 'A/MG-43 Пулеметная турель', name_en: 'A/MG-43 Machine Gun Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'right', 'up'], img: 'img/a_mg_43_machine_gun_sentry.svg' },
+        { id: 'a_g_16_gatling_sentry', name_ru: 'A/G-16 Турель «Гатлинг»', name_en: 'A/G-16 Gatling Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'left'], img: 'img/a_g_16_gatling_sentry.svg' },
+        { id: 'a_m_12_mortar_sentry', name_ru: 'A/M-12 Минометная турель', name_en: 'A/M-12 Mortar Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'right', 'down'], img: 'img/a_m_12_mortar_sentry.svg' },
+        { id: 'a_ac_8_autocannon_sentry', name_ru: 'A/AC-8 Автопушечная турель', name_en: 'A/AC-8 Autocannon Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'up', 'left', 'up'], img: 'img/a_ac_8_autocannon_sentry.svg' },
+        { id: 'a_mls_4x_rocket_sentry', name_ru: 'A/MLS-4X Ракетная турель', name_en: 'A/MLS-4X Rocket Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'right', 'left'], img: 'img/a_mls_4x_rocket_sentry.svg' },
+        { id: 'a_m_23_ems_mortar_sentry', name_ru: 'A/M-23 ЭМИ-минометная турель', name_en: 'A/M-23 EMS Mortar Sentry', cat: 'cat6', seq: ['down', 'up', 'right', 'down', 'right'], img: 'img/a_m_23_ems_mortar_sentry.svg' },
+        { id: 'exo_45_patriot_exosuit', name_ru: 'EXO-45 Экзокостюм «Патриот»', name_en: 'EXO-45 Patriot Exosuit', cat: 'cat6', seq: ['left', 'down', 'right', 'up', 'left', 'down', 'down'], img: 'img/exo_45_patriot_exosuit.svg' },
+        { id: 'exo_49_emancipator_exosuit', name_ru: 'EXO-49 Экзокостюм «Освободитель»', name_en: 'EXO-49 Emancipator Exosuit', cat: 'cat6', seq: ['left', 'down', 'right', 'up', 'left', 'down', 'up'], img: 'img/exo_49_emancipator_exosuit.svg' },
 
         { id: 'reinforce', name_ru: 'Подкрепление', name_en: 'Reinforce', cat: 'cat7', seq: ['up', 'down', 'right', 'left', 'up'], img: 'img/reinforce.svg' },
         { id: 'resupply', name_ru: 'Припасы', name_en: 'Resupply', cat: 'cat7', seq: ['down', 'down', 'up', 'right'], img: 'img/resupply.svg' },
         { id: 'sos_beacon', name_ru: 'Маяк SOS', name_en: 'SOS Beacon', cat: 'cat7', seq: ['up', 'down', 'right', 'up'], img: 'img/sos_beacon.svg' },
-        { id: 'nux_223_hellbomb', name_ru: 'Адская бомба', name_en: 'Hellbomb', cat: 'cat7', seq: ['down', 'up', 'left', 'down', 'up', 'right', 'down', 'up'], img: 'img/nux_223_hellbomb.svg' },
+        { id: 'nux_223_hellbomb', name_ru: 'NUX-223 Адская бомба', name_en: 'NUX-223 Hellbomb', cat: 'cat7', seq: ['down', 'up', 'left', 'down', 'up', 'right', 'down', 'up'], img: 'img/nux_223_hellbomb.svg' },
         { id: 'seaf_artillery', name_ru: 'Артиллерия SEAF', name_en: 'SEAF Artillery', cat: 'cat7', seq: ['right', 'up', 'up', 'down'], img: 'img/seaf_artillery.svg' },
 
-        // --- НОВЫЕ КАТЕГОРИИ (ЗАСЛУГИ / УТЕЧКИ ИЗ СКРИНШОТОВ) ---
+        { id: 'tx_41_sterilizer', name_ru: 'TX-41 Стерилизатор', name_en: 'TX-41 Sterilizer', cat: 'cat_chem', seq: ['down', 'left', 'up', 'down', 'left'], img: 'img/tx_41_sterilizer.svg' },
+        { id: 'ax_tx_13_dog_breath', name_ru: 'AX/TX-13 Дрон «Вонючка»', name_en: 'AX/TX-13 "Dog Breath" Rover', cat: 'cat_chem', seq: ['down', 'up', 'left', 'up', 'right', 'up'], img: 'img/ax_tx_13_dog_breath.svg' },
 
-        // ХИМЗАЩИТА
-        { id: 'tx_41_sterilizer', name_ru: 'Стерилизатор', name_en: 'Sterilizer', cat: 'cat_chem', seq: ['down', 'left', 'up', 'down', 'left'], img: 'img/tx_41_sterilizer.svg' },
-        { id: 'ax_tx_13_dog_breath', name_ru: 'Вонючка', name_en: '"Dog Breath" Rover', cat: 'cat_chem', seq: ['down', 'up', 'left', 'up', 'right', 'up'], img: 'img/ax_tx_13_dog_breath.svg' },
+        { id: 'sh_51_directional_shield', name_ru: 'SH-51 Щит направленного действия', name_en: 'SH-51 Directional Shield', cat: 'cat_urban', seq: ['down', 'up', 'left', 'right', 'up', 'up'], img: 'img/sh_51_directional_shield.svg' },
+        { id: 'e_flam_40_flame_sentry', name_ru: 'E/FLAM-40 Турель-огнемет', name_en: 'E/FLAM-40 Flame Sentry', cat: 'cat_urban', seq: ['down', 'up', 'right', 'down', 'up', 'up'], img: 'img/a_flam_40_flame_sentry.svg' },
+        { id: 'e_at_12_anti_tank_emplacement', name_ru: 'E/AT-12 Противотанковое орудие', name_en: 'E/AT-12 Anti-Tank Emplacement', cat: 'cat_urban', seq: ['down', 'up', 'left', 'right', 'right', 'right'], img: 'img/e_at_12_anti_tank_emplacement.svg' },
 
-        // ГОРОДСКИЕ ЛЕГЕНДЫ
-        { id: 'sh_51_directional_shield', name_ru: 'Щит направленного действия', name_en: 'Directional Shield', cat: 'cat_urban', seq: ['down', 'up', 'left', 'right', 'up', 'up'], img: 'img/sh_51_directional_shield.svg' },
-        { id: 'e_flam_40_flame_sentry', name_ru: 'Турель-огнемет', name_en: 'Flame Sentry', cat: 'cat_urban', seq: ['down', 'up', 'right', 'down', 'up', 'up'], img: 'img/a_flam_40_flame_sentry.svg' },
-        { id: 'e_at_12_anti_tank_emplacement', name_ru: 'Противотанковое орудие', name_en: 'Anti-Tank Emplacement', cat: 'cat_urban', seq: ['down', 'up', 'left', 'right', 'right', 'right'], img: 'img/e_at_12_anti_tank_emplacement.svg' },
+        { id: 'b_100_portable_hellbomb', name_ru: 'B-100 Переносная адская бомба', name_en: 'B-100 Portable Hellbomb', cat: 'cat_servants', seq: ['down', 'right', 'up', 'up', 'up'], img: 'img/b_100_portable_hellbomb.svg' },
 
-        // СЛУГИ СВОБОДЫ
-        { id: 'b_100_portable_hellbomb', name_ru: 'Переносная адская бомба', name_en: 'Portable Hellbomb', cat: 'cat_servants', seq: ['down', 'right', 'up', 'up', 'up'], img: 'img/b_100_portable_hellbomb.svg' },
+        { id: 'hover_pack', name_ru: 'LIFT-860 Ранец для парения', name_en: 'LIFT-860 Hover Pack', cat: 'cat_frontier', seq: ['down', 'up', 'up', 'down', 'left'], img: 'img/lift_860_hover_pack.svg' },
 
-        // ПОГРАНИЧНОЕ ПРАВОСУДИЕ
-        { id: 'hover_pack', name_ru: 'Ранец для парения', name_en: 'Hover Pack', cat: 'cat_frontier', seq: ['down', 'up', 'up', 'down', 'left'], img: 'img/lift_860_hover_pack.svg' },
+        { id: 'cqc_1_one_true_flag', name_ru: 'CQC-1 Один истинный флаг', name_en: 'CQC-1 One True Flag', cat: 'cat_ceremony', seq: ['down', 'left', 'right', 'right', 'up'], img: 'img/cqc_1_one_true_flag.svg' },
 
-        // ЦЕРЕМОНИЙМЕЙСТЕР
-        { id: 'cqc_1_one_true_flag', name_ru: 'Один истинный флаг', name_en: 'One True Flag', cat: 'cat_ceremony', seq: ['down', 'left', 'right', 'right', 'up'], img: 'img/cqc_1_one_true_flag.svg' },
+        { id: 'ax_arc_3_k_9', name_ru: 'AX/ARC-3 Дрон «К-9»', name_en: 'AX/ARC-3 "K-9" Guard Dog', cat: 'cat_law', seq: ['down', 'up', 'left', 'up', 'right', 'left'], img: 'img/ax_arc_3_k_9.svg' },
+        { id: 'gl_52_de_escalator', name_ru: 'GL-52 Деэскалатор', name_en: 'GL-52 De-Escalator', cat: 'cat_law', seq: ['down', 'right', 'up', 'left', 'right'], img: 'img/gl_52_de_escalator.svg' },
 
-        // СИЛА ЗАКОНА
-        { id: 'ax_arc_3_k_9', name_ru: 'К-9', name_en: 'K-9 Guard Dog', cat: 'cat_law', seq: ['down', 'up', 'left', 'up', 'right', 'left'], img: 'img/ax_arc_3_k_9.svg' },
-        { id: 'gl_52_de_escalator', name_ru: 'Деэскалатор', name_en: 'De-Escalator', cat: 'cat_law', seq: ['down', 'right', 'up', 'left', 'right'], img: 'img/gl_52_de_escalator.svg' },
+        { id: 'laser_sentry', name_ru: 'A/LAS-98 Лазерная турель', name_en: 'A/LAS-98 Laser Sentry', cat: 'cat_control', seq: ['down', 'up', 'right', 'left', 'up'], img: 'img/a_las_98_laser_sentry.svg' },
+        { id: 'warp_pack', name_ru: 'LIFT-182 Варп-ранец', name_en: 'LIFT-182 Warp Pack', cat: 'cat_control', seq: ['down', 'up', 'left', 'down', 'right'], img: 'img/lift_182_warp_pack.svg' },
+        { id: 'epoch', name_ru: 'PLAS-45 Эпоха', name_en: 'PLAS-45 Epoch', cat: 'cat_control', seq: ['down', 'left', 'up', 'right', 'down'], img: 'img/plas_45_epoch.svg' },
 
-        // КОНТРОЛЬНАЯ ГРУППА
-        { id: 'laser_sentry', name_ru: 'Лазерная турель', name_en: 'Laser Sentry', cat: 'cat_control', seq: ['down', 'up', 'right', 'left', 'up'], img: 'img/a_las_98_laser_sentry.svg' },
-        { id: 'warp_pack', name_ru: 'Варп-ранец', name_en: 'Warp Pack', cat: 'cat_control', seq: ['down', 'up', 'left', 'down', 'right'], img: 'img/lift_182_warp_pack.svg' },
-        { id: 'epoch', name_ru: 'Эпоха', name_en: 'Epoch', cat: 'cat_control', seq: ['down', 'left', 'up', 'right', 'down'], img: 'img/plas_45_epoch.svg' },
+        { id: 'ms_11_solo_silo', name_ru: 'MS-11 Одиночная пусковая шахта', name_en: 'MS-11 Solo Silo', cat: 'cat_dust', seq: ['down', 'up', 'right', 'down', 'down'], img: 'img/ms_11_solo_silo.svg' },
+        { id: 'disposable_napalm', name_ru: 'EAT-700 Одноразовый напалм', name_en: 'EAT-700 Expendable Napalm', cat: 'cat_dust', seq: ['down', 'left', 'up', 'down', 'right'], img: 'img/eat_700_expendable_napalm.svg' },
+        { id: 'harpoon', name_ru: 'S-11 Гарпун', name_en: 'S-11 Speargun', cat: 'cat_dust', seq: ['down', 'left', 'down', 'up', 'right'], img: 'img/s_11_speargun.svg' },
 
-        // ПЫЛЕВЫЕ ВИХРИ
-        { id: 'ms_11_solo_silo', name_ru: 'Одиночная пусковая шахта', name_en: 'Solo Silo', cat: 'cat_dust', seq: ['down', 'up', 'right', 'down', 'down'], img: 'img/ms_11_solo_silo.svg' },
-        { id: 'disposable_napalm', name_ru: 'Одноразовый напалм', name_en: 'EAT-700 Expendable Napalm', cat: 'cat_dust', seq: ['down', 'left', 'up', 'down', 'right'], img: 'img/eat_700_expendable_napalm.svg' },
-        { id: 'harpoon', name_ru: 'Гарпун', name_en: 'S-11 Speargun', cat: 'cat_dust', seq: ['down', 'left', 'down', 'up', 'right'], img: 'img/s_11_speargun.svg' },
+        { id: 'maxigun', name_ru: 'M-1000 Максиган', name_en: 'M-1000 Maxigun', cat: 'cat_pythons', seq: ['down', 'left', 'down', 'right', 'up'], img: 'img/m_1000_maxigun.svg' },
+        { id: 'cqc_9_defoliation_tool', name_ru: 'CQC-9 Дефолиатор', name_en: 'CQC-9 Defoliator', cat: 'cat_pythons', seq: ['down', 'left', 'right', 'right', 'down'], img: 'img/cqc_9_defoliation_tool.svg' },
+        { id: 'ax_flam_75_hot_dog', name_ru: 'AX/FLAM-75 Дрон «Хот-дог»', name_en: 'AX/FLAM-75 "Hot Dog"', cat: 'cat_pythons', seq: ['down', 'up', 'left', 'up', 'left', 'left'], img: 'img/ax_flam_75_hot_dog.svg' },
 
-        // КОММАНДОС «ПИТОНЫ»
-        { id: 'maxigun', name_ru: 'Максиган', name_en: 'M-1000 Maxigun', cat: 'cat_pythons', seq: ['down', 'left', 'down', 'right', 'up'], img: 'img/m_1000_maxigun.svg' },
-        { id: 'cqc_9_defoliation_tool', name_ru: 'Дефолиатор', name_en: 'Defoliator', cat: 'cat_pythons', seq: ['down', 'left', 'right', 'right', 'down'], img: 'img/cqc_9_defoliation_tool.svg' },
-        { id: 'ax_flam_75_hot_dog', name_ru: 'Хот-дог', name_en: 'Hot Dog', cat: 'cat_pythons', seq: ['down', 'up', 'left', 'up', 'left', 'left'], img: 'img/ax_flam_75_hot_dog.svg' },
+        { id: 'c4_kit', name_ru: 'B/MD Комплект C4', name_en: 'B/MD C4 Pack', cat: 'cat_redacted', seq: ['down', 'left', 'down', 'up', 'up'], img: 'img/b_md_c4_pack.svg' },
 
-        // ПОЛК [ВЫРЕЗАНО]
-        { id: 'c4_kit', name_ru: 'Комплект C4', name_en: 'B/MD C4 Pack', cat: 'cat_redacted', seq: ['down', 'left', 'down', 'up', 'up'], img: 'img/b_md_c4_pack.svg' },
+        { id: 'cqc_20_breaching_hammer', name_ru: 'CQC-20 Штурмовой молот', name_en: 'CQC-20 Breaching Hammer', cat: 'cat_blockade', seq: ['down', 'left', 'right', 'left', 'up'], img: 'img/cqc_20_breaching_hammer.svg' },
+        { id: 'equalizer', name_ru: 'EAT-411 Уравнитель', name_en: 'EAT-411 Leveller', cat: 'cat_blockade', seq: ['down', 'left', 'right', 'down', 'up'], img: 'img/eat_411_leveller.svg' },
+        { id: 'belt_grenade_launcher', name_ru: 'GL-28 Ленточный гранатомет', name_en: 'GL-28 Belt-Fed Grenade Launcher', cat: 'cat_blockade', seq: ['down', 'left', 'down', 'up', 'down'], img: 'img/gl_28_belt_fed_grenade_launcher.svg' },
 
-        // РАЗРЫВАЮЩИЕ БЛОКАДУ
-        { id: 'cqc_20_breaching_hammer', name_ru: 'Штурмовой молот', name_en: 'Breaching Hammer', cat: 'cat_blockade', seq: ['down', 'left', 'right', 'left', 'up'], img: 'img/cqc_20_breaching_hammer.svg' },
-        { id: 'equalizer', name_ru: 'Уравнитель', name_en: 'EAT-411 Leveller', cat: 'cat_blockade', seq: ['down', 'left', 'right', 'down', 'up'], img: 'img/eat_411_leveller.svg' },
-        { id: 'belt_grenade_launcher', name_ru: 'Ленточный гранатомет', name_en: 'GL-28 Belt-Fed Grenade Launcher', cat: 'cat_blockade', seq: ['down', 'left', 'down', 'up', 'down'], img: 'img/gl_28_belt_fed_grenade_launcher.svg' },
+        { id: 'b_flam_80_cremator', name_ru: 'B/FLAM-80 Крематорий', name_en: 'B/FLAM-80 Cremator', cat: 'cat_trench', seq: ['down', 'down', 'right', 'down', 'up', 'up'], img: 'img/b_flam_80_cremator.svg' },
+        { id: 'gas_mortar_sentry', name_ru: 'A/GM-17 Турель с газовым минометом', name_en: 'A/GM-17 Gas Mortar Sentry', cat: 'cat_trench', seq: ['down', 'up', 'right', 'right', 'left'], img: 'img/a_gm_17_gas_mortar_sentry.svg' },
 
-        // ТРАНШЕЙНАЯ ДИВИЗИЯ
-        { id: 'b_flam_80_cremator', name_ru: 'Крематорий', name_en: 'B/FLAM-80 Cremator', cat: 'cat_trench', seq: ['down', 'down', 'right', 'down', 'up', 'up'], img: 'img/b_flam_80_cremator.svg' },
-        { id: 'gas_mortar_sentry', name_ru: 'Турель с газовым минометом', name_en: 'A/GM-17 Gas Mortar Sentry', cat: 'cat_trench', seq: ['down', 'up', 'right', 'right', 'left'], img: 'img/a_gm_17_gas_mortar_sentry.svg' },
+        { id: 'exo_breach', name_ru: 'EXO-55 Экзокостюм «Прорыв»', name_en: 'EXO-55 Breakthrough Exosuit', cat: 'cat_exo', seq: ['left', 'down', 'right', 'up', 'left', 'up', 'up'], img: 'img/exo_55_breakthrough_exosuit.svg' },
+        { id: 'exo_lumberjack', name_ru: 'EXO-51 Экзокостюм «Лесоруб»', name_en: 'EXO-51 Lumberer Exosuit', cat: 'cat_exo', seq: ['left', 'down', 'right', 'up', 'left', 'down', 'left'], img: 'img/exo_51_lumberer_exosuit.svg' },
+        { id: 'bullet_storm', name_ru: 'MGX-42 «Шквал пуль»', name_en: 'MGX-42 Bullet Storm', cat: 'cat_exo', seq: ['down', 'left', 'right', 'up', 'down'], img: 'img/mgx_42_bullet_storm.svg' },
 
-        // ЭКЗОЭКСПЕРТЫ
-        { id: 'exo_breach', name_ru: 'Экзокостюм «Прорыв»', name_en: 'EXO-55 Breakthrough', cat: 'cat_exo', seq: ['left', 'down', 'right', 'up', 'left', 'up', 'up'], img: 'img/exo_55_breakthrough_exosuit.svg' },
-        { id: 'exo_lumberjack', name_ru: 'Экзокостюм «Лесоруб»', name_en: 'EXO-51 Lumberer Exosuit', cat: 'cat_exo', seq: ['left', 'down', 'right', 'up', 'left', 'down', 'left'], img: 'img/exo_51_lumberer_exosuit.svg' },
-        { id: 'bullet_storm', name_ru: '«Шквал пуль»', name_en: 'MGX-42 Bullet Storm', cat: 'cat_exo', seq: ['down', 'left', 'right', 'up', 'down'], img: 'img/mgx_42_bullet_storm.svg' },
-
-        // ИДЕАЛЫ КАСТЕЛЯНА
-        { id: 'melta_gun', name_ru: 'Плавкопушка', name_en: '40-K Meltagun', cat: 'cat_castellan', seq: ['down', 'left', 'down', 'right', 'left'], img: 'img/40_k_meltagun.svg' }
+        { id: 'melta_gun', name_ru: '40-K Плавкопушка', name_en: '40-K Meltagun', cat: 'cat_castellan', seq: ['down', 'left', 'down', 'right', 'left'], img: 'img/40_k_meltagun.svg' }
     ];
 
     const arrowSymbols = { 'up': '🡅', 'down': '🡇', 'left': '🡄', 'right': '🡆' };
@@ -542,10 +509,6 @@
         return code.toUpperCase();
     }
 
-    function updatePracticeHintUI() {
-        document.getElementById('practice-controls-hint').innerHTML = gamepadDetected ? t('practiceHintGamepad') : t('practiceHint');
-    }
-
     function updateLanguageUI() {
         document.documentElement.lang = currentLang;
         document.title = t('pageTitle');
@@ -560,11 +523,6 @@
         document.getElementById('lbl-record').textContent = t('record');
         document.getElementById('ui-record').textContent = record;
         
-        updatePracticeHintUI();
-        document.getElementById('overlay-title').textContent = t('awaitingInput');
-        document.getElementById('overlay-desc').textContent = t('pressAnyKey');
-        document.getElementById('overlay-sub').textContent = t('pressEsc');
-        
         document.getElementById('settings-title').textContent = t('settingsTitle');
         document.getElementById('lbl-lang').textContent = t('langLabel');
         document.getElementById('lbl-input').textContent = t('inputLabel');
@@ -577,20 +535,44 @@
         document.getElementById('opt-input-custom').textContent = t('inputCustom');
         document.getElementById('lbl-custom-hint').textContent = t('customHint');
 
-        if (state === 'menu') {
+        const currentTimerText = document.getElementById('timer-text').textContent;
+        if (currentTimerText === i18n['ru'].selectMode || currentTimerText === i18n['en'].selectMode) {
             document.getElementById('timer-text').textContent = t('selectMode');
             document.getElementById('timer-text').style.color = '#fff';
             document.getElementById('timer-fill').style.backgroundColor = '#222';
-        } else if (state === 'practice') {
+        } else if (currentTimerText === i18n['ru'].practiceActive || currentTimerText === i18n['en'].practiceActive) {
             document.getElementById('timer-text').textContent = t('practiceActive');
             document.getElementById('timer-text').style.color = '#888';
             document.getElementById('timer-fill').style.backgroundColor = '#2a2c31';
+        } else if (currentTimerText === i18n['ru'].traitor || currentTimerText === i18n['en'].traitor) {
+            document.getElementById('timer-text').textContent = t('traitor');
+            document.getElementById('timer-text').style.color = '#000';
+            document.getElementById('timer-fill').style.backgroundColor = '#ffe800';
+        } else if (currentTimerText === i18n['ru'].timeOut || currentTimerText === i18n['en'].timeOut) {
+            document.getElementById('timer-text').textContent = t('timeOut');
+            document.getElementById('timer-fill').style.backgroundColor = '#ff0000';
+            document.getElementById('timer-text').style.color = '#fff';
         }
+        
+        const currentOverlayTitle = document.getElementById('overlay-title').textContent;
+        if (currentOverlayTitle === i18n['ru'].awaitingInput || currentOverlayTitle === i18n['en'].awaitingInput) {
+            document.getElementById('overlay-title').textContent = t('awaitingInput');
+            document.getElementById('overlay-desc').textContent = t('pressAnyKey');
+        } else if (currentOverlayTitle === i18n['ru'].gameOver || currentOverlayTitle === i18n['en'].gameOver) {
+            document.getElementById('overlay-title').textContent = t('gameOver');
+            document.getElementById('overlay-desc').textContent = t('restart').replace('{s}', score);
+        }
+        document.getElementById('overlay-sub').textContent = t('pressEsc');
         
         if (currentStratagem) {
             document.getElementById('active-name').textContent = currentLang === 'ru' ? currentStratagem.name_ru : currentStratagem.name_en;
         } else {
-            document.getElementById('active-name').textContent = t('loading');
+            const currentActiveName = document.getElementById('active-name').textContent;
+            if (currentActiveName === i18n['ru'].alertSelect || currentActiveName === i18n['en'].alertSelect) {
+                document.getElementById('active-name').textContent = t('alertSelect');
+            } else {
+                document.getElementById('active-name').textContent = t('loading');
+            }
         }
 
         renderSidebar(); 
@@ -814,7 +796,6 @@
         document.getElementById('btn-mode-practice').classList.toggle('active', mode === 'practice');
         
         document.getElementById('stats-panel').style.display = mode === 'game' ? 'flex' : 'none';
-        document.getElementById('practice-controls').style.display = mode === 'practice' ? 'block' : 'none';
         
         renderSidebar();
         document.getElementById('select-all').checked = (getActivePool().length === db.length);
@@ -882,7 +863,6 @@
         }
         
         document.getElementById('stats-panel').style.display = 'flex';
-        document.getElementById('practice-controls').style.display = 'none';
         document.getElementById('ui-score').textContent = score;
         document.getElementById('ui-round').textContent = round;
         document.getElementById('overlay').classList.add('hidden');
@@ -947,7 +927,6 @@
         practiceIndex = 0; inputLocked = false;
         
         document.getElementById('stats-panel').style.display = 'none';
-        document.getElementById('practice-controls').style.display = 'block';
         document.getElementById('overlay').classList.add('hidden');
         
         document.getElementById('timer-fill').style.width = '100%';
@@ -1201,7 +1180,6 @@
 
         if (anyGamepadPressed && !gamepadDetected) {
             gamepadDetected = true;
-            updatePracticeHintUI();
         }
 
         requestAnimationFrame(pollGamepad);
