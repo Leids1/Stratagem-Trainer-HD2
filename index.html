@@ -133,15 +133,67 @@
         }
         #timer-text { position: relative; z-index: 1; color: #000; font-weight: 700; font-size: 22px; letter-spacing: 2px; }
 
-        #active-stratagem { margin-top: 50px; display: flex; flex-direction: column; align-items: center; min-height: 200px; }
+        #active-stratagem { margin-top: 50px; display: flex; flex-direction: column; align-items: center; min-height: 200px; position: relative; }
         #active-img { width: 100px; height: 100px; object-fit: contain; margin-bottom: 15px; }
         #active-name { font-size: 28px; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
 
-        #arrows-container { display: flex; gap: 10px; }
-        .arrow { font-size: 50px; color: #444; font-weight: bold; font-family: sans-serif; }
+        #arrows-container { display: flex; align-items: center; justify-content: center; }
+        .arrow-wrapper { position: relative; display: flex; align-items: center; }
+        .arrow { font-size: 50px; color: #444; font-weight: bold; font-family: sans-serif; padding: 0 5px; margin: 0; }
         .arrow.active { color: #ffe800; text-shadow: 0 0 15px #ffe800; }
         .arrow.completed { color: #fff; }
+        .arrow.inactive { opacity: 0.15 !important; }
         
+        .gap { 
+            position: absolute; right: 0; transform: translateX(50%); 
+            width: 24px; height: 60px; 
+            display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; z-index: 10; 
+        }
+        .gap::after { 
+            content: ''; position: absolute; 
+            width: 4px; height: 40px; background: transparent; 
+            border-radius: 2px; transition: background 0.2s, height 0.2s; 
+        }
+        .gap:hover::after { background: rgba(255,255,255,0.2); }
+        .gap.is-split::after { height: 60px; background: #ffe800; }
+        
+        /* Обновленная кнопка разделения */
+        .gap-triangle { 
+            position: absolute; bottom: -28px; 
+            background: #2a2c31; border: 1px solid #444; color: #ffe800; 
+            font-size: 14px; padding: 2px 8px; border-radius: 4px;
+            cursor: pointer; transition: all 0.2s; user-select: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+        .gap-triangle:hover { 
+            background: #ffe800; color: #000; transform: scale(1.1); 
+        }
+
+        /* Обновленное меню разделения с отступами и крестиком */
+        #split-menu {
+            position: absolute; top: calc(100% + 20px); left: 50%; transform: translateX(-50%);
+            background: #1a1c20; border: 2px solid #ffe800; padding: 25px 15px 15px 15px; display: flex; flex-direction: column; gap: 8px; z-index: 50;
+            border-radius: 5px; box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+        .close-cross {
+            position: absolute; top: 5px; right: 8px; color: #888; 
+            font-size: 14px; cursor: pointer; transition: color 0.2s;
+            font-family: sans-serif; user-select: none;
+        }
+        .close-cross:hover { color: #ff0000; }
+
+        #split-menu button {
+            background: #2a2c31; color: white; border: 1px solid #444; padding: 8px 12px; cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: 16px; transition: 0.2s;
+        }
+        #split-menu button:hover { background: #ffe800; color: #000; }
+        #split-menu input {
+            width: 60px; padding: 8px; background: #222; color: #fff; border: 1px solid #444; text-align: center; font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: 16px; outline: none;
+        }
+        #split-menu input:focus { border-color: #ffe800; }
+        
+        #rep-counter { margin-bottom: 15px; font-size: 22px; color: #ffe800; font-weight: bold; display: none; text-shadow: 0 0 10px rgba(255,232,0,0.4); }
+
         .error-state { color: #ff0000 !important; text-shadow: 0 0 15px #ff0000 !important; }
         .shake { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
         
@@ -245,7 +297,21 @@
             <div id="active-stratagem">
                 <img id="active-img" src="" alt="" onerror="this.style.opacity='0'">
                 <div id="active-name">выбери стратаген слева</div>
+                
+                <div id="rep-counter"></div>
                 <div id="arrows-container"></div>
+                
+                <div id="split-menu" class="hidden">
+                    <span class="close-cross" onclick="closeSplitMenu()">✖</span>
+                    <div style="display: flex; gap: 5px;">
+                        <button id="btn-split-left" onclick="setSplitPart(1)">ЛЕВАЯ ПОЛОВИНА</button>
+                        <button id="btn-split-right" onclick="setSplitPart(2)">ПРАВАЯ ПОЛОВИНА</button>
+                    </div>
+                    <div style="display:flex; gap:5px; margin-top:5px; align-items: center; justify-content: center;">
+                        <label style="color:#fff; font-size: 16px;">ПОВТОРЫ:</label>
+                        <input type="number" id="split-rep-input" min="1" value="1" oninput="applySplitReps()">
+                    </div>
+                </div>
             </div>
 
             <div id="overlay">
@@ -468,7 +534,7 @@
 
     // РАЗДЕЛЬНЫЕ ПУЛЫ СТРАТАГЕМ
     let activePoolGame = [...db]; 
-    let activePoolPractice = []; // В тренировке изначально всё выключено
+    let activePoolPractice = []; 
     
     let state = 'menu'; 
     let selectedMode = 'game'; 
@@ -486,6 +552,66 @@
     // Очередь для показа следующих стратагем
     let upcomingQueue = [];
     const UPCOMING_COUNT = 4;
+
+    // Состояние разделения
+    let splitState = { index: -1, activePart: 0, repetitions: 1, currentRep: 0 };
+    
+    function getStartIdx() {
+        if (splitState.index === -1) return 0;
+        return splitState.activePart === 2 ? splitState.index : 0;
+    }
+    
+    function getEndIdx() {
+        if (splitState.index === -1) return currentStratagem ? currentStratagem.seq.length : 0;
+        return splitState.activePart === 1 ? splitState.index : currentStratagem.seq.length;
+    }
+
+    function openSplitMenu() {
+        document.getElementById('split-menu').classList.remove('hidden');
+        document.getElementById('split-rep-input').value = splitState.repetitions;
+        updateSplitMenuUI();
+    }
+
+    function closeSplitMenu() {
+        document.getElementById('split-menu').classList.add('hidden');
+    }
+
+    function setSplitPart(part) {
+        splitState.activePart = part;
+        splitState.currentRep = 0;
+        currentIndex = getStartIdx();
+        updateSplitMenuUI();
+        renderArrows();
+    }
+
+    function applySplitReps() {
+        const reps = parseInt(document.getElementById('split-rep-input').value) || 1;
+        splitState.repetitions = Math.max(1, reps);
+        splitState.currentRep = 0;
+        currentIndex = getStartIdx();
+        renderArrows();
+    }
+
+    function updateSplitMenuUI() {
+        const btnLeft = document.getElementById('btn-split-left');
+        const btnRight = document.getElementById('btn-split-right');
+        
+        btnLeft.style.background = splitState.activePart === 1 ? '#ffe800' : '#2a2c31';
+        btnLeft.style.color = splitState.activePart === 1 ? '#000' : '#fff';
+        
+        btnRight.style.background = splitState.activePart === 2 ? '#ffe800' : '#2a2c31';
+        btnRight.style.color = splitState.activePart === 2 ? '#000' : '#fff';
+    }
+
+    // Обработчик клика по любому месту, чтобы закрыть меню
+    document.addEventListener('click', (e) => {
+        const splitMenu = document.getElementById('split-menu');
+        if (splitMenu && !splitMenu.classList.contains('hidden')) {
+            if (!splitMenu.contains(e.target)) {
+                closeSplitMenu();
+            }
+        }
+    });
 
     // --- ФУНКЦИИ ЛОКАЛИЗАЦИИ И UI ---
     function t(key) { return i18n[currentLang][key]; }
@@ -943,7 +1069,10 @@
         const pool = getActivePool();
         if (pool.length === 0) return;
         currentStratagem = pool[practiceIndex];
-        currentIndex = 0;
+        
+        splitState = { index: -1, activePart: 0, repetitions: 1, currentRep: 0 };
+        closeSplitMenu();
+        currentIndex = getStartIdx();
         
         upcomingQueue = [];
         for (let i = 1; i <= UPCOMING_COUNT; i++) {
@@ -965,7 +1094,10 @@
             currentStratagem = pool[Math.floor(Math.random() * pool.length)];
         }
         
-        currentIndex = 0;
+        splitState = { index: -1, activePart: 0, repetitions: 1, currentRep: 0 };
+        closeSplitMenu();
+        currentIndex = getStartIdx();
+        
         updateActiveUI();
     }
 
@@ -981,20 +1113,85 @@
     function renderArrows(isError = false) {
         const container = document.getElementById('arrows-container');
         container.innerHTML = '';
+        
+        const startIdx = getStartIdx();
+        const endIdx = getEndIdx();
+
         currentStratagem.seq.forEach((dir, i) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'arrow-wrapper';
+            
             const span = document.createElement('span');
             span.textContent = arrowSymbols[dir];
             span.className = 'arrow';
-            if (isError) span.classList.add('error-state');
-            else if (i < currentIndex) span.classList.add('completed');
-            else if (i === currentIndex) span.classList.add('active');
-            container.appendChild(span);
+            
+            if (i < startIdx || i >= endIdx) {
+                span.classList.add('inactive');
+            } else {
+                if (isError) span.classList.add('error-state');
+                else if (i < currentIndex) span.classList.add('completed');
+                else if (i === currentIndex) span.classList.add('active');
+            }
+            
+            wrapper.appendChild(span);
+
+            // Добавляем линию разделения, если это не последняя стрелочка
+            if (i < currentStratagem.seq.length - 1) {
+                const gapIdx = i + 1;
+                const gap = document.createElement('div');
+                gap.className = 'gap' + (splitState.index === gapIdx ? ' is-split' : '');
+                
+                if (splitState.index === gapIdx) {
+                    const triangle = document.createElement('div');
+                    triangle.className = 'gap-triangle';
+                    triangle.textContent = '✂'; // Иконка ножниц вместо треугольника
+                    triangle.onclick = (e) => {
+                        e.stopPropagation();
+                        openSplitMenu();
+                    };
+                    gap.appendChild(triangle);
+                }
+                
+                gap.onclick = (e) => {
+                    if (e.target.classList.contains('gap-triangle')) return;
+                    e.stopPropagation(); 
+                    
+                    if (splitState.index === gapIdx) {
+                        splitState = { index: -1, activePart: 0, repetitions: 1, currentRep: 0 };
+                        closeSplitMenu();
+                    } else {
+                        // По умолчанию делаем активной левую половину, если кликнули впервые на эту позицию
+                        splitState = { index: gapIdx, activePart: 1, repetitions: parseInt(document.getElementById('split-rep-input').value) || 1, currentRep: 0 };
+                        updateSplitMenuUI();
+                    }
+                    currentIndex = getStartIdx();
+                    renderArrows();
+                };
+                
+                wrapper.appendChild(gap);
+            }
+            
+            container.appendChild(wrapper);
         });
+
+        const repDiv = document.getElementById('rep-counter');
+        if (splitState.index !== -1 && splitState.repetitions > 1) {
+            repDiv.style.display = 'block';
+            repDiv.textContent = `ПОВТОР: ${splitState.currentRep + 1} / ${splitState.repetitions}`;
+        } else {
+            repDiv.style.display = 'none';
+        }
     }
 
     // --- УНИВЕРСАЛЬНАЯ ОБРАБОТКА ВВОДА ---
     function processDirection(dir) {
         if (inputLocked) return;
+
+        // Закрываем меню разделения, если игрок начал ввод
+        const splitMenu = document.getElementById('split-menu');
+        if (splitMenu && !splitMenu.classList.contains('hidden')) {
+            closeSplitMenu();
+        }
 
         if (state === 'menu' || state === 'gameover') {
             if (selectedMode === 'game') startGame();
@@ -1004,33 +1201,57 @@
         if (state !== 'playing' && state !== 'practice') return;
         if (!currentStratagem) return; 
 
+        const startIdx = getStartIdx();
+        const endIdx = getEndIdx();
+
+        if (currentIndex < startIdx) currentIndex = startIdx;
+
         if (dir === currentStratagem.seq[currentIndex]) {
             currentIndex++;
             
-            if (currentIndex === currentStratagem.seq.length) {
-                if (state === 'playing') {
-                    score += currentStratagem.seq.length * 10;
-                    document.getElementById('ui-score').textContent = score;
-                    timeLeft = Math.min(MAX_TIME, timeLeft + 1500); 
+            if (currentIndex === endIdx) {
+                splitState.currentRep++;
+                if (splitState.currentRep < splitState.repetitions) {
+                    currentIndex = startIdx;
+                    renderArrows();
+                } else {
+                    splitState.currentRep = 0; 
                     
-                    stratagemsInRound++;
-                    if (stratagemsInRound >= 5) {
-                        round++;
-                        stratagemsInRound = 0;
-                        document.getElementById('ui-round').textContent = round;
-                        timeLeft = Math.min(MAX_TIME, timeLeft + 2000); 
+                    // Логика бесконечного чередования половин
+                    if (splitState.index !== -1) {
+                        // Меняем половину на противоположную (1 на 2, или 2 на 1)
+                        splitState.activePart = splitState.activePart === 1 ? 2 : 1;
+                        currentIndex = getStartIdx();
+                        updateSplitMenuUI();
+                        renderArrows();
+                        return; // Прерываем дальнейшее выполнение
                     }
-                    nextRandomStratagem(); 
-                } else if (state === 'practice') {
-                    const pool = getActivePool();
-                    practiceIndex = (practiceIndex + 1) % pool.length;
-                    loadPracticeStratagem();
+                    
+                    if (state === 'playing') {
+                        score += (endIdx - startIdx) * 10;
+                        document.getElementById('ui-score').textContent = score;
+                        timeLeft = Math.min(MAX_TIME, timeLeft + 1500); 
+                        
+                        stratagemsInRound++;
+                        if (stratagemsInRound >= 5) {
+                            round++;
+                            stratagemsInRound = 0;
+                            document.getElementById('ui-round').textContent = round;
+                            timeLeft = Math.min(MAX_TIME, timeLeft + 2000); 
+                        }
+                        nextRandomStratagem(); 
+                    } else if (state === 'practice') {
+                        const pool = getActivePool();
+                        practiceIndex = (practiceIndex + 1) % pool.length;
+                        loadPracticeStratagem();
+                    }
                 }
             } else {
                 renderArrows();
             }
         } else {
-            currentIndex = 0;
+            currentIndex = startIdx;
+            // Счетчик повторов больше не сбрасывается при ошибке!
             renderArrows(true);
             document.getElementById('game-area').classList.add('shake');
             
@@ -1105,6 +1326,10 @@
         if (key === '1') return setMode('game');
         if (key === '2') return setMode('practice');
         if (key === 'escape') {
+            if (!document.getElementById('split-menu').classList.contains('hidden')) {
+                closeSplitMenu();
+                return;
+            }
             if (selectedMode === 'game') return showOverlay(t('awaitingInput'), t('pressAnyKey'));
             return;
         }
@@ -1138,6 +1363,42 @@
         }
     });
 
+    // --- ОБРАБОТКА СВАЙПОВ ---
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    document.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    }, {passive: true});
+
+    document.addEventListener('touchend', (e) => {
+        let touchEndX = e.changedTouches[0].screenX;
+        let touchEndY = e.changedTouches[0].screenY;
+        
+        const threshold = 30; // Минимальная длина свайпа
+        let dx = touchEndX - touchStartX;
+        let dy = touchEndY - touchStartY;
+        
+        if (Math.abs(dx) < threshold && Math.abs(dy) < threshold) return; // Игнорируем случайные касания
+
+        let dir = null;
+        if (Math.abs(dx) > Math.abs(dy)) {
+            // Горизонтальный свайп
+            if (dx > 0) dir = 'right';
+            else dir = 'left';
+        } else {
+            // Вертикальный свайп
+            if (dy > 0) dir = 'down';
+            else dir = 'up';
+        }
+        
+        if (dir) {
+            processDirection(dir);
+        }
+    }, {passive: true});
+
+    // --- ОБРАБОТКА ГЕЙМПАДА ---
     let previousGamepadState = { up: false, down: false, left: false, right: false, start: false, lb: false, rb: false };
     
     function pollGamepad() {
