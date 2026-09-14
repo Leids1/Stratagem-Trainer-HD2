@@ -31,11 +31,8 @@
         #sidebar {
             width: 380px;
             background-color: #1a1c20;
-            border-right: 4px solid #ffe800;
             display: flex;
             flex-direction: column;
-            border-left: 10px solid #2a2c31; 
-            border-image: repeating-linear-gradient(45deg, #2a2c31, #2a2c31 10px, #1a1c20 10px, #1a1c20 20px) 1;
             position: relative;
             z-index: 30; 
         }
@@ -244,7 +241,7 @@
             </div>
 
             <div id="practice-controls">
-                <div id="practice-controls-hint"><span class="controls-hint">[Q] / [L1]</span> Пред. &nbsp;&nbsp;|&nbsp;&nbsp; <span class="controls-hint">[E] / [R1]</span> След.</div>
+                <div id="practice-controls-hint"></div>
             </div>
 
             <!-- Блок следующих стратагем -->
@@ -319,11 +316,12 @@
             pageTitle: "Stratagem Trainer Helldivers 2",
             selectAll: "ВЫБРАТЬ ВСЕ", search: "Поиск стратагем...", gameMode: "ИГРА", practiceMode: "ТРЕНИРОВКА",
             settings: "НАСТРОЙКИ ⚙", round: "Раунд", score: "Счет", record: "Рекорд : ",
-            practiceHint: "<span class='controls-hint'>[Q] / [L1]</span> Пред. &nbsp;&nbsp;|&nbsp;&nbsp; <span class='controls-hint'>[E] / [R1]</span> След.",
+            practiceHint: "<span class='controls-hint'>[Q]</span> Пред. &nbsp;&nbsp;|&nbsp;&nbsp; <span class='controls-hint'>[E]</span> След.",
+            practiceHintGamepad: "<span class='controls-hint'>[Q] / [L1]</span> Пред. &nbsp;&nbsp;|&nbsp;&nbsp; <span class='controls-hint'>[E] / [R2]</span> След.",
             selectMode: "ВЫБЕРИТЕ РЕЖИМ", loading: "выбери стратаген слева", awaitingInput: "ОЖИДАНИЕ ВВОДА",
             pressAnyKey: "Нажмите любую клавишу перемещения", pressEsc: "Нажмите [ESC] чтобы прервать сессию",
             timeOut: "ВРЕМЯ ИСТЕКАЕТ!", traitor: "ОБНАРУЖЕН ПРЕДАТЕЛЬ !", gameOver: "ИГРА ОКОНЧЕНА",
-            restart: "Счет: {s}. Нажмите ПРОБЕЛ (или A) для рестарта.", practiceActive: "РЕЖИМ ТРЕНИРОВКИ",
+            restart: "Счет: {s}. Нажмите для рестарта.", practiceActive: "РЕЖИМ ТРЕНИРОВКИ",
             alertSelect: "Выберите стратагемы слева!", settingsTitle: "НАСТРОЙКИ", langLabel: "ЯЗЫК:",
             inputLabel: "УПРАВЛЕНИЕ:", close: "ЗАКРЫТЬ", timerSpeed: "СКОРОСТЬ ТАЙМЕРА (СЕК):",
             inputBoth: "WASD + Стрелки", inputWasd: "Только WASD", inputArrows: "Только Стрелки", inputCustom: "Свои кнопки",
@@ -335,11 +333,12 @@
             pageTitle: "Stratagem Trainer Helldivers 2",
             selectAll: "SELECT ALL", search: "Search stratagems...", gameMode: "PLAY", practiceMode: "PRACTICE",
             settings: "SETTINGS ⚙", round: "Round", score: "Score", record: "Record : ",
-            practiceHint: "<span class='controls-hint'>[Q] / [L1]</span> Prev. &nbsp;&nbsp;|&nbsp;&nbsp; <span class='controls-hint'>[E] / [R1]</span> Next.",
+            practiceHint: "<span class='controls-hint'>[Q]</span> Prev. &nbsp;&nbsp;|&nbsp;&nbsp; <span class='controls-hint'>[E]</span> Next.",
+            practiceHintGamepad: "<span class='controls-hint'>[Q] / [L1]</span> Prev. &nbsp;&nbsp;|&nbsp;&nbsp; <span class='controls-hint'>[E] / [R2]</span> Next.",
             selectMode: "SELECT MODE", loading: "Select a stratagem on the left", awaitingInput: "AWAITING INPUT",
             pressAnyKey: "Press any movement key", pressEsc: "Press [ESC] to abort session",
             timeOut: "TIME IS RUNNING OUT!", traitor: "TRAITOR DETECTED !", gameOver: "GAME OVER",
-            restart: "Score: {s}. Press SPACE (or A) to restart.", practiceActive: "PRACTICE MODE",
+            restart: "Score: {s}. Press to restart.", practiceActive: "PRACTICE MODE",
             alertSelect: "Select stratagems on the left!", settingsTitle: "SETTINGS", langLabel: "LANGUAGE:",
             inputLabel: "INPUT SETTINGS:", close: "CLOSE", timerSpeed: "TIMER SPEED (SEC):",
             inputBoth: "WASD + Arrows", inputWasd: "WASD Only", inputArrows: "Arrows Only", inputCustom: "Custom Keys",
@@ -441,6 +440,7 @@
     let inputLocked = false;
     let practiceIndex = 0;
     let recordingKey = null;
+    let gamepadDetected = false;
 
     let MAX_TIME = timerSpeed * 1000;
     let timeLeft = MAX_TIME, lastTime = 0, timerId;
@@ -472,6 +472,10 @@
         return code.toUpperCase();
     }
 
+    function updatePracticeHintUI() {
+        document.getElementById('practice-controls-hint').innerHTML = gamepadDetected ? t('practiceHintGamepad') : t('practiceHint');
+    }
+
     function updateLanguageUI() {
         document.documentElement.lang = currentLang;
         document.title = t('pageTitle');
@@ -486,7 +490,7 @@
         document.getElementById('lbl-record').textContent = t('record');
         document.getElementById('ui-record').textContent = record;
         
-        document.getElementById('practice-controls-hint').innerHTML = t('practiceHint');
+        updatePracticeHintUI();
         document.getElementById('overlay-title').textContent = t('awaitingInput');
         document.getElementById('overlay-desc').textContent = t('pressAnyKey');
         document.getElementById('overlay-sub').textContent = t('pressEsc');
@@ -620,7 +624,6 @@
                 img.onerror = () => img.style.opacity = '0';
                 item.appendChild(img);
                 
-                // Надежное переключение (не зависит от поиска)
                 item.onclick = () => {
                     const isNowActive = item.classList.toggle('active');
                     const pool = getActivePool();
@@ -670,7 +673,7 @@
             container.appendChild(catDiv);
         });
 
-        // Обработчики категорий
+        // Обработчики чекбоксов категорий
         document.querySelectorAll('.cat-checkbox').forEach(cb => {
             cb.onchange = (e) => {
                 const catId = e.target.dataset.cat;
@@ -693,6 +696,7 @@
         });
     }
 
+    // Обработчик кнопки "ВЫБРАТЬ ВСЕ"
     document.getElementById('select-all').onchange = (e) => {
         const checked = e.target.checked;
         if (selectedMode === 'game') {
@@ -705,6 +709,7 @@
         document.querySelectorAll('.cat-checkbox').forEach(cb => cb.checked = checked);
         updateActivePoolUI();
     };
+
     document.getElementById('search-input').oninput = renderSidebar;
 
     function updateActivePoolUI() {
@@ -717,7 +722,7 @@
             const catActiveCount = catStrats.filter(s => currentPool.some(a => a.id === s.id)).length;
             cb.checked = (catActiveCount > 0 && catActiveCount === catStrats.length);
         });
-
+        
         if (state === 'practice') {
             practiceIndex = 0;
             if (currentPool.length > 0) loadPracticeStratagem();
@@ -726,6 +731,8 @@
                 document.getElementById('active-img').style.opacity = '0';
                 document.getElementById('active-name').textContent = t('alertSelect');
                 document.getElementById('arrows-container').innerHTML = '';
+                upcomingQueue = [];
+                renderUpcomingQueue();
             }
         }
     }
@@ -736,18 +743,16 @@
         document.getElementById('btn-mode-game').classList.toggle('active', mode === 'game');
         document.getElementById('btn-mode-practice').classList.toggle('active', mode === 'practice');
         
-        // Исправление бага смены вкладок: сразу переключаем видимость панелей
         document.getElementById('stats-panel').style.display = mode === 'game' ? 'flex' : 'none';
         document.getElementById('practice-controls').style.display = mode === 'practice' ? 'block' : 'none';
-        document.getElementById('upcoming-container').style.display = 'none';
         
-        // Рендерим меню под конкретный режим (с его пулом)
         renderSidebar();
         document.getElementById('select-all').checked = (getActivePool().length === db.length);
 
         if (mode === 'practice') {
             startPractice();
         } else {
+            document.getElementById('upcoming-container').style.display = 'none';
             if (state !== 'playing') {
                 showOverlay(t('awaitingInput'), t('pressAnyKey'));
                 document.getElementById('active-img').style.opacity = '0';
@@ -777,7 +782,7 @@
     function renderUpcomingQueue() {
         const container = document.getElementById('upcoming-container');
         container.innerHTML = '';
-        if (selectedMode !== 'game' || state !== 'playing') {
+        if ((selectedMode !== 'game' || state !== 'playing') && state !== 'practice') {
             container.style.display = 'none';
             return;
         }
@@ -864,6 +869,8 @@
             document.getElementById('active-img').style.opacity = '0';
             document.getElementById('active-name').textContent = t('alertSelect');
             document.getElementById('arrows-container').innerHTML = '';
+            upcomingQueue = [];
+            renderUpcomingQueue();
         }
         
         state = 'practice';
@@ -871,7 +878,6 @@
         
         document.getElementById('stats-panel').style.display = 'none';
         document.getElementById('practice-controls').style.display = 'block';
-        document.getElementById('upcoming-container').style.display = 'none';
         document.getElementById('overlay').classList.add('hidden');
         
         document.getElementById('timer-fill').style.width = '100%';
@@ -889,6 +895,13 @@
         if (pool.length === 0) return;
         currentStratagem = pool[practiceIndex];
         currentIndex = 0;
+        
+        upcomingQueue = [];
+        for (let i = 1; i <= UPCOMING_COUNT; i++) {
+            upcomingQueue.push(pool[(practiceIndex + i) % pool.length]);
+        }
+        renderUpcomingQueue();
+
         updateActiveUI();
     }
 
@@ -940,7 +953,7 @@
         }
 
         if (state !== 'playing' && state !== 'practice') return;
-        if (!currentStratagem) return; // Защита для пустой тренировки
+        if (!currentStratagem) return; 
 
         if (dir === currentStratagem.seq[currentIndex]) {
             currentIndex++;
@@ -1080,6 +1093,8 @@
     
     function pollGamepad() {
         const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+        let anyGamepadPressed = false;
+
         for (let i = 0; i < gamepads.length; i++) {
             const gp = gamepads[i];
             if (gp) {
@@ -1087,14 +1102,18 @@
                 const buttons = gp.buttons;
                 const deadzone = 0.5;
 
+                if (!anyGamepadPressed) {
+                    anyGamepadPressed = buttons.some(b => b && b.pressed) || Math.abs(axes[0]) > deadzone || Math.abs(axes[1]) > deadzone;
+                }
+
                 const up = (buttons[12] && buttons[12].pressed) || (axes[1] < -deadzone);
                 const down = (buttons[13] && buttons[13].pressed) || (axes[1] > deadzone);
                 const left = (buttons[14] && buttons[14].pressed) || (axes[0] < -deadzone);
                 const right = (buttons[15] && buttons[15].pressed) || (axes[0] > deadzone);
                 
                 const start = (buttons[0] && buttons[0].pressed) || (buttons[9] && buttons[9].pressed);
-                const lb = buttons[4] && buttons[4].pressed;
-                const rb = buttons[5] && buttons[5].pressed;
+                const lb = buttons[4] && buttons[4].pressed; // L1
+                const rb = (buttons[5] && buttons[5].pressed) || (buttons[7] && buttons[7].pressed); // R1 или R2
 
                 if (up && !previousGamepadState.up) processDirection('up');
                 if (down && !previousGamepadState.down) processDirection('down');
@@ -1109,6 +1128,12 @@
                 break; 
             }
         }
+
+        if (anyGamepadPressed && !gamepadDetected) {
+            gamepadDetected = true;
+            updatePracticeHintUI();
+        }
+
         requestAnimationFrame(pollGamepad);
     }
     
